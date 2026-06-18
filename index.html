@@ -3,71 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>COFFEE — des solutions le temps d'un café</title>
+<meta name="theme-color" content="#0F2238">
+<title>COFFEE — FIDAL Notaires</title>
 <link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--line:#DEDCD3;--cyan:#6DD5DC;--gold:#A98A45;--urgent:#B5462F}
+  :root{
+    --navy:#0F2238; --navy2:#13314f; --stone:#F5F5F4; --ocre:#E3CC7A;
+    --ink:#20283D; --muted:#6B7280; --line:#E5E3DD; --card:#FFFFFF;
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:30px 18px}
-  .wrap{max-width:1040px;margin:0 auto}
-  header{text-align:center;margin-bottom:10px}
-  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--urgent)}
-  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 4px rgba(181,70,47,.14)}
-  .wordmark{font-family:'Fraunces',serif;font-weight:600;font-size:48px;letter-spacing:.02em;margin-top:10px}
-  .tagline{color:var(--ink-soft);font-style:italic;font-size:16px;margin-top:2px}
-  h2{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
-  .soon{font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:#fff;border:1px solid var(--line);padding:2px 9px;border-radius:20px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:16px}
-  .tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:24px 16px;border-radius:21px;background:linear-gradient(155deg,#1b3a5c,#102844 55%,#0c2038);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.06);transition:.18s;box-shadow:0 10px 28px -16px rgba(12,32,56,.75)}
-  .tile:hover{transform:translateY(-3px);box-shadow:0 16px 36px -14px rgba(12,32,56,.9)}
-  .tile .ic{width:56px;height:56px}
-  .tile .nm{font-weight:600;font-size:15px}
-  .tile .tg{font-size:12px;color:#A9C2D6}
-  .tile.soon-tile{background:#fff;color:var(--ink-soft);border:1px dashed var(--line);box-shadow:none;cursor:default}
-  .tile.soon-tile:hover{transform:none;box-shadow:none}
-  .tile.soon-tile .nm{color:var(--ink)}
-  .tile .badge{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
-  footer{margin-top:36px;font-size:12px;color:var(--ink-soft);text-align:center;border-top:1px solid var(--line);padding-top:14px}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--stone);color:var(--ink);line-height:1.5}
+  .wrap{max-width:1152px;margin:0 auto;padding:0 20px}
+
+  /* EN-TÊTE (charte FIDAL v2.2) */
+  .topbar{background:linear-gradient(180deg,var(--navy2),var(--navy));color:#fff}
+  .topbar .wrap{padding:18px 20px 22px}
+  .lockup{font-family:Georgia,"Times New Roman",serif;font-size:16px;display:flex;align-items:center;gap:9px}
+  .lockup .slash{color:var(--ocre);font-weight:700;font-size:18px}
+  .lockup .notaires{font-family:"Segoe UI",sans-serif;letter-spacing:.3em;font-size:12px}
+  .appline{display:flex;align-items:center;gap:14px;margin-top:16px}
+  .appicon{width:46px;height:46px;flex:none}
+  .wordmark{font-family:Georgia,serif;font-size:34px;font-weight:700;letter-spacing:.05em;line-height:1}
+  .baseline{color:#A9C2D6;font-style:italic;font-size:14px;margin-top:3px}
+  .accentbar{height:3px;width:66px;background:var(--ocre);border-radius:2px;margin-top:16px}
+
+  /* FIL D'ARIANE */
+  .crumb{padding:18px 0 0;font-size:13px;color:var(--muted)}
+  .crumb a{color:var(--muted);text-decoration:none;cursor:pointer}
+  .crumb a:hover{color:var(--ink);text-decoration:underline}
+  .crumb .sep{margin:0 8px;color:#C4C2BA}
+  .crumb .cur{color:var(--ink);font-weight:600}
+
+  h2.sec{font-family:Georgia,serif;font-size:21px;font-weight:700;color:var(--navy);margin:16px 0 16px}
+
+  /* GRILLE DE CARTES */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px;padding-bottom:36px}
+  .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 18px 22px;text-decoration:none;color:inherit;display:block;overflow:hidden;transition:.16s}
+  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,#33838B)}
+  .card.live{cursor:pointer}
+  .card.live:hover{transform:translateY(-2px);box-shadow:0 14px 28px -18px rgba(15,34,56,.55);border-color:#D8D5CD}
+  .card .ic{width:30px;height:30px;color:var(--c,#33838B);margin-bottom:10px}
+  .card .nm{font-weight:600;font-size:16px;color:var(--navy)}
+  .card .ds{font-size:13px;color:var(--muted);margin-top:3px}
+  .card .go{font-size:12px;font-weight:600;color:var(--c);margin-top:13px;display:inline-block}
+  .card.soon{opacity:.6}
+  .card.soon::before{background:#C4C2BA}
+  .card.soon .ic{color:#9aa0a8}
+  .card.soon .nm{color:#6B7280}
+  .badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8a8f98;background:#EFEEE9;border:1px solid var(--line);padding:2px 9px;border-radius:20px}
+
+  .hidden{display:none}
+  footer{border-top:1px solid var(--line);padding:16px 0 32px;font-size:12px;color:var(--muted)}
+  @media(max-width:560px){.wordmark{font-size:28px}}
 </style>
 </head>
 <body>
+
+<div class="topbar"><div class="wrap">
+  <div class="lockup">FIDAL <span class="slash">/</span> <span class="notaires">NOTAIRES</span></div>
+  <div class="appline">
+    <svg class="appicon" viewBox="0 0 78 78" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><path d="M30 23.7 q3 -3 0 -6 q-3 -3 0 -6" opacity="0.5"/><path d="M39 23.7 q3 -3 0 -6 q-3 -3 0 -6" opacity="0.5"/><path d="M48 23.7 q3 -3 0 -6 q-3 -3 0 -6" opacity="0.5"/><path d="M25 30 L29.5 62 Q39 65.8 48.5 62 L53 30"/><ellipse cx="39" cy="30" rx="14" ry="3.8"/></g><path d="M26.5 41 Q39 47.8 51.5 41 L50.6 47 Q39 53.3 27.4 47 Z" fill="#F2C14E"/></svg>
+    <div>
+      <div class="wordmark">COFFEE</div>
+      <div class="baseline">Des solutions, le temps d'un café.</div>
+    </div>
+  </div>
+  <div class="accentbar"></div>
+</div></div>
+
 <div class="wrap">
-  <header>
-    <div class="eyebrow">FIDAL Apps</div>
-    <div class="wordmark">COFFEE</div>
-    <p class="tagline">Des solutions, le temps d'un café.</p>
-  </header>
 
-  <h2>Bordereaux — clés</h2>
-  <div class="grid">
-    <a class="tile" href="./coffee-cles-entree.html">
-      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><path d="M24 48 h30 v8 a2 2 0 0 1 -2 2 H26 a2 2 0 0 1 -2 -2 z"/><path d="M39 20 V44 M30 35 l9 9 l9 -9"/></g></svg>
-      <span class="nm">Entrée des clés</span><span class="tg">Les clés rentrent à l'étude</span>
-    </a>
-    <a class="tile" href="./coffee-cles-sortie.html">
-      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><path d="M24 48 h30 v8 a2 2 0 0 1 -2 2 H26 a2 2 0 0 1 -2 -2 z"/><path d="M39 44 V20 M30 29 l9 -9 l9 9"/></g></svg>
-      <span class="nm">Sortie des clés</span><span class="tg">L'étude remet les clés</span>
-    </a>
-    <a class="tile" href="./coffee-cles-directe.html">
-      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="39" r="5"/><circle cx="58" cy="39" r="5"/><path d="M27 39 H51 M45 33 l6 6 l-6 6"/></g></svg>
-      <span class="nm">Remise directe</span><span class="tg">Vendeur → acquéreur</span>
-    </a>
+  <!-- ACCUEIL -->
+  <div id="home">
+    <div class="crumb"><span class="cur">Accueil</span></div>
+    <h2 class="sec">Réflexes en séance</h2>
+    <div class="grid">
+
+      <div class="card live" style="--c:#33838B" onclick="show('cles')">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3.5"/><path d="M10.5 10.5 L20 20 M17.5 17.5 l2 -2 M15 15 l2 -2"/></svg>
+        <div class="nm">Bordereaux — clés</div>
+        <div class="ds">Entrée, sortie et remise directe des clés.</div>
+        <span class="go">Ouvrir &rarr;</span>
+      </div>
+
+      <div class="card soon" style="--c:#5E9079"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Entrée en jouissance différée</div><div class="ds">Occupation avant transfert de propriété.</div>
+      </div>
+
+      <div class="card soon" style="--c:#3B6BA5"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Occupation du bien</div><div class="ds">Constat d'occupation à la remise.</div>
+      </div>
+
+      <div class="card soon" style="--c:#E07A1F"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Dégradation du bien</div><div class="ds">Constat d'état et réserves.</div>
+      </div>
+
+      <div class="card soon" style="--c:#C99A2E"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Quotités d'acquisition</div><div class="ds">Répartition entre acquéreurs.</div>
+      </div>
+
+      <div class="card soon" style="--c:#1FA3AD"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Versement pour compte de</div><div class="ds">Reçu de versement par un tiers.</div>
+      </div>
+
+      <div class="card soon" style="--c:#7A6BA5"><span class="badge">À venir</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+        <div class="nm">Procuration</div><div class="ds">Réflexe procuration en séance.</div>
+      </div>
+
+    </div>
   </div>
 
-  <h2>Autres réflexes <span class="soon">à venir</span></h2>
-  <div class="grid">
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Entrée en jouissance différée</span><span class="badge">À venir</span></div>
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Occupation du bien</span><span class="badge">À venir</span></div>
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Dégradation du bien</span><span class="badge">À venir</span></div>
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Quotités d'acquisition</span><span class="badge">À venir</span></div>
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Versement pour compte de</span><span class="badge">À venir</span></div>
-    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Procuration</span><span class="badge">À venir</span></div>
+  <!-- BORDEREAUX — CLÉS -->
+  <div id="cles" class="hidden">
+    <div class="crumb"><a onclick="show('home')">Accueil</a><span class="sep">&rsaquo;</span><span class="cur">Bordereaux — clés</span></div>
+    <h2 class="sec">Bordereaux — clés</h2>
+    <div class="grid">
+
+      <a class="card live" style="--c:#33838B" href="./coffee-cles-entree.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15h14v3a1 1 0 0 1 -1 1H6a1 1 0 0 1 -1 -1z"/><path d="M12 4V13M8.5 9.5 12 13l3.5 -3.5"/></svg>
+        <div class="nm">Entrée des clés</div><div class="ds">Les clés rentrent à l'étude (dépôt).</div>
+        <span class="go">Ouvrir &rarr;</span>
+      </a>
+
+      <a class="card live" style="--c:#33838B" href="./coffee-cles-sortie.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15h14v3a1 1 0 0 1 -1 1H6a1 1 0 0 1 -1 -1z"/><path d="M12 13V4M8.5 7.5 12 4l3.5 3.5"/></svg>
+        <div class="nm">Sortie des clés</div><div class="ds">L'étude remet les clés au destinataire.</div>
+        <span class="go">Ouvrir &rarr;</span>
+      </a>
+
+      <a class="card live" style="--c:#33838B" href="./coffee-cles-directe.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M8 12h8M13 9l3 3-3 3"/></svg>
+        <div class="nm">Remise directe</div><div class="ds">Vendeur &rarr; acquéreur, l'étude témoin.</div>
+        <span class="go">Ouvrir &rarr;</span>
+      </a>
+
+    </div>
   </div>
 
-  <footer>COFFEE — des solutions le temps d'un café · gamme FIDAL Apps. Les liens des bordereaux fonctionneront une fois le site déployé (fichiers coffee-cles-*.html placés à la racine).</footer>
+  <footer>COFFEE &middot; FIDAL Notaires — Paris &middot; gamme FIDAL Apps</footer>
 </div>
+
+<script>
+  function show(id){
+    document.getElementById('home').classList.toggle('hidden', id !== 'home');
+    document.getElementById('cles').classList.toggle('hidden', id !== 'cles');
+    window.scrollTo(0, 0);
+  }
+</script>
 </body>
 </html>
