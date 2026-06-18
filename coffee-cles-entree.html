@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COFFEE · Bordereau d'entrée des clés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--card:#FFFFFF;--line:#DEDCD3;--emerald:#2E5A4B;--emerald-d:#244A3D;--urgent:#B5462F;--gold:#A98A45;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:18px}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:22px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--urgent);margin-bottom:10px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 4px rgba(181,70,47,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-.01em;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:14.5px;margin-top:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:4px}
+  .hint{color:var(--ink-soft);font-size:13px;margin-bottom:16px}
+  label.fld{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+  input[type=text],input[type=date],textarea{width:100%;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  textarea{min-height:60px;resize:vertical}
+  input:focus,textarea:focus{outline:2px solid rgba(46,90,75,.35);border-color:var(--emerald)}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  .seg{display:flex;flex-wrap:wrap;background:#F1F0EA;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
+  .seg button{font:inherit;font-weight:500;border:0;background:none;color:var(--ink-soft);padding:8px 14px;border-radius:7px;cursor:pointer;flex:1;white-space:nowrap}
+  .seg button.on{background:var(--emerald);color:#fff}
+  .checklist{display:flex;flex-direction:column;gap:6px}
+  .chk{display:flex;align-items:center;gap:10px;background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+  .chk.on{border-color:var(--emerald);background:rgba(46,90,75,.05)}
+  .chk input[type=checkbox]{width:18px;height:18px;accent-color:var(--emerald)}
+  .chk span{flex:1;font-size:14.5px}
+  .chk .qty{width:66px;flex:none}.chk .qty select{width:100%;padding:7px 6px;font:inherit;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;text-align:center}
+  .addrow{display:flex;gap:8px;margin-top:8px}.addrow input{flex:1}
+  .btn-add{font:inherit;font-weight:500;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:0 14px;cursor:pointer}
+  .photo-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:1.5px dashed var(--line);background:#FBFBF8;border-radius:12px;padding:16px;cursor:pointer;color:var(--ink-soft);font-weight:500}
+  .photo-btn svg{width:20px;height:20px}
+  .photo-thumb{margin-top:10px;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+  .photo-thumb img{display:block;width:100%}
+  .photo-meta{font-size:12px;color:var(--ink-soft);padding:6px 10px}
+  .cond{display:none}.cond.show{display:block}
+  .plus-btn{font:inherit;font-weight:600;color:var(--emerald-d);background:rgba(46,90,75,.06);border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;width:100%;text-align:left}
+  .collapse{display:none;margin-top:8px}.collapse.open{display:block}
+  .ac{position:relative}
+  .ac-list{position:absolute;left:0;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 26px -8px rgba(32,40,61,.28);z-index:30;overflow:hidden;display:none}
+  .ac-list.show{display:block}
+  .ac-item{padding:9px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid #F1F0EA}
+  .ac-item:last-child{border-bottom:0}
+  .ac-item:hover,.ac-item.active{background:rgba(46,90,75,.08)}
+  .ac-item .ctx{display:block;font-size:12px;color:var(--ink-soft)}
+  .ac-status{font-size:12px;margin-top:6px;min-height:15px}
+  .ac-status.ok{color:var(--emerald-d)} .ac-status.ok::before{content:"✓ "}
+  .ac-status.warn{color:var(--gold)} .ac-status.busy{color:var(--ink-soft)}
+  .idbox{margin-top:6px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#FBFBF8}
+  .partial-box{margin-top:6px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#FBFBF8}
+  .actions{display:flex;gap:10px;margin-bottom:14px}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 16px;cursor:pointer}
+  .btn-print{background:var(--emerald);color:#fff}
+  .btn-copy{background:#fff;border:1px solid var(--line);color:var(--ink)}
+  .btn:disabled{opacity:.6;cursor:default}
+  #repSelect{width:100%;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  #repSelect:focus,#repManual:focus{outline:2px solid rgba(46,90,75,.35);border-color:var(--emerald)}
+  .mic-row{display:flex;gap:8px}.mic-row input{flex:1}
+  .mic-btn{flex:none;width:46px;border:1px solid var(--line);background:#fff;border-radius:10px;cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;justify-content:center}
+  .mic-btn svg{width:20px;height:20px}
+  .mic-btn.rec{background:var(--urgent);color:#fff;border-color:var(--urgent);animation:micpulse 1s infinite}
+  @keyframes micpulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .doc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:26px}
+  .doc .head{border-bottom:1.5px solid var(--ink);padding-bottom:12px;margin-bottom:16px}
+  .doc .office{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+  .doc .title{font-family:'Fraunces',serif;font-weight:500;font-size:21px;margin-top:4px}
+  .doc .ctxtag{display:inline-block;margin-top:6px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--emerald-d);background:rgba(46,90,75,.08);padding:3px 9px;border-radius:20px}
+  .doc p{font-size:13.5px;margin:7px 0;line-height:1.5}
+  .doc .lead{color:var(--ink-soft)}
+  .doc b{font-weight:600}
+  .doc .keys-list{list-style:none;margin:4px 0 8px;font-size:13.5px}
+  .doc .keys-list li{padding:2px 0;border-bottom:1px dotted var(--line)}
+  .doc .keys-list li:last-child{border-bottom:0}
+  .declbox{margin:12px 0;padding:10px 0 10px 14px;border-left:3px solid var(--emerald);font-size:13.5px}
+  .declbox .who{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--emerald-d);margin-bottom:3px}
+  .proofs{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px}
+  .proof-item{flex:1;min-width:150px;text-align:center}
+  .proof-item img{display:block;width:100%;border-radius:8px;border:1px solid var(--line)}
+  .proof-item .cap{font-size:11px;color:var(--ink-soft);margin-top:4px}
+  .muted{color:var(--ink-soft);font-style:italic;font-size:13px}
+  .sigs{display:flex;gap:26px;margin-top:24px}
+  .sigs .s{flex:1;text-align:center}
+  .sigs .line{height:44px;border-bottom:1px solid var(--ink);margin-bottom:6px}
+  .sigs small{font-size:12px;color:var(--ink-soft)}
+  .footnote{margin-top:16px;font-size:11px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:10px}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;transition:.25s;pointer-events:none}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media print{
+    @page{size:A4;margin:13mm}
+    body{background:#fff;padding:0}.wrap{max-width:none}
+    header,.panel.form,.actions,.hint{display:none!important}
+    .grid{display:block}.panel.out{border:0;padding:0}.panel.out h2{display:none}
+    .doc{border:0;border-radius:0;padding:0}.doc .title{font-size:19px}
+    .doc p,.doc .keys-list,.declbox{font-size:11.5px}
+    .proof-item img{max-height:46mm;width:auto;max-width:100%;margin:0 auto}
+    .sigs{margin-top:16px}.sigs .line{height:32px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">COFFEE · en séance</div>
+    <div class="wordmark">Bordereau d'entrée des clés</div>
+    <div class="sub">Les clés rentrent à l'étude : le remettant dépose, l'étude réceptionne.</div>
+  </header>
+  <div class="grid">
+    <div class="panel form">
+      <h2>Les informations</h2>
+      <div class="hint">Adresse, personne présente, clés (photo ou détail), pièce d'identité.</div>
+
+      <div id="repWrap">
+        <label class="fld">Représentant de l'étude</label>
+        <select id="repSelect"></select>
+        <input type="text" id="repManual" placeholder="Nom du collaborateur signataire" style="display:none;margin-top:8px">
+      </div>
+
+      <label class="fld">Bien (adresse)</label>
+      <div class="ac" id="bienAc"><input type="text" id="bien" placeholder="Commencez à taper l'adresse…" autocomplete="off"><div class="ac-list" id="bienList"></div></div>
+      <div class="ac-status" id="bienStatus"></div>
+
+      <label class="fld">Remettant</label>
+      <input type="text" id="person" placeholder="Remettant (nom)">
+
+      <div id="idWrap">
+        <label class="fld">Identité du remettant</label>
+        <div class="idbox">
+          <label class="fld" style="margin-top:0">Photo de la pièce d'identité</label>
+          <label class="photo-btn" for="idPhotoInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2"/><path d="M13 9h5M13 13h5M5 16h9"/></svg><span id="idPhotoLabel">Prendre / choisir une photo</span></label>
+          <input type="file" id="idPhotoInput" accept="image/*" capture="environment" style="display:none">
+          <div class="photo-thumb" id="idPhotoThumb" style="display:none"><img id="idPhotoImg" alt=""><div class="photo-meta" id="idPhotoMeta"></div></div>
+          <button type="button" class="plus-btn" id="idManualToggle" style="margin-top:10px">+ Renseigner manuellement</button>
+          <div class="collapse" id="idManualCollapse">
+            <label class="fld">Pièce d'identité</label>
+            <div class="seg" id="idTypeSeg"></div>
+            <label class="fld">Numéro de la pièce</label>
+            <input type="text" id="idNum" placeholder="N° de la pièce">
+          </div>
+        </div>
+      </div>
+
+
+
+      <div id="motifWrap">
+        <label class="fld">Motif</label>
+        <div class="seg" id="motifSeg"></div>
+        <label class="fld" id="lblMotif">Précision</label>
+        <div class="mic-row">
+          <input type="text" id="motifPrecis">
+          <button type="button" class="mic-btn" id="motifMic" title="Dicter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+        </div>
+      </div>
+
+      <label class="fld">Remise de clés</label>
+      <div class="seg" id="remiseSeg"></div>
+      <div class="cond partial-box" id="partialBox">
+        <label class="fld" style="margin-top:0">Éléments non remis ce jour</label>
+        <textarea id="missingWhat" placeholder="Ex. : un double des clés de la porte d'entrée"></textarea>
+        <div class="row"><div><label class="fld">Détenus par</label><input type="text" id="missingWho"></div><div><label class="fld">Remise prévue le</label><input type="date" id="missingWhen"></div></div>
+      </div>
+
+      <label class="fld">Photo des clés (preuve)</label>
+      <label class="photo-btn" for="photoInput"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4l1.5 2h3a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l1.5-2z"/><circle cx="12" cy="13" r="3.5"/></svg><span id="photoLabel">Prendre / choisir une photo</span></label>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+      <div class="photo-thumb" id="photoThumb" style="display:none"><img id="photoImg" alt=""><div class="photo-meta" id="photoMeta"></div></div>
+
+      <label class="fld">Détail des clés et accès (facultatif)</label>
+      <button type="button" class="plus-btn" id="keysToggle">+ Détailler les clés et accès</button>
+      <div class="collapse" id="keysCollapse"><div class="checklist" id="keysList"></div>
+        <div class="addrow"><input type="text" id="keyAdd" placeholder="Ajouter un accès…"><button class="btn-add" onclick="addKey()">Ajouter</button></div></div>
+
+
+    </div>
+
+    <div class="panel out">
+      <h2>Bordereau</h2>
+      <div class="actions">
+        <button class="btn btn-print" onclick="sendMail(this)">Envoyer par e-mail</button>
+        <button class="btn btn-copy" onclick="downloadPdf(this)">Télécharger le PDF</button>
+        <button class="btn btn-copy" onclick="window.print()">Imprimer</button>
+        <button class="btn btn-copy" onclick="copyText()">Copier le texte</button>
+      </div>
+      <div class="doc" id="doc"></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Texte copié</div>
+<script>
+const DOCTITLE="Bordereau d'entrée des clés";
+const DOCSLUG="Bordereau-entree-cles";
+function buildMotif(){const el=document.getElementById("motifSeg");el.innerHTML="";
+  [["acquereur","Pour remise à l'acquéreur"],["succession","Règlement d'une succession"],["autre","Autre"]].forEach(([k,lbl])=>{
+    const b=document.createElement("button");b.textContent=lbl;if(state.motif===k)b.className="on";
+    b.onclick=()=>{state.motif=k;syncMotifLabel();render();};el.appendChild(b);});}
+function syncMotifLabel(){const l=document.getElementById("lblMotif"),i=document.getElementById("motifPrecis");
+  if(state.motif==="acquereur"){l.textContent="Nom de l'acquéreur (facultatif)";i.placeholder="Ex. : M. et Mme Martin";}
+  else if(state.motif==="succession"){l.textContent="Succession de (facultatif)";i.placeholder="Ex. : M. Jean Dupont";}
+  else{l.textContent="Précisez le motif";i.placeholder="Ex. : à disposition jusqu'à nouvel ordre";}}
+function render(){
+  buildKeys();buildRemise();buildIdSeg();buildMotif();syncMotifLabel();
+  const repSel=document.getElementById("repSelect").value;
+  const bien=val("bien"),person=val("person"),rep=(repSel==="__manual"?val("repManual"):repSel),now=new Date();
+  const partialClause=partialClauseHtml();
+  const prec=val("motifPrecis");let motifPhrase,conservPhrase;
+  if(state.motif==="acquereur"){motifPhrase=`en vue de leur remise ultérieure à l'acquéreur${prec?` (${prec})`:""}`;conservPhrase="jusqu'à leur remise à l'acquéreur";}
+  else if(state.motif==="succession"){motifPhrase=`dans l'attente du règlement de la succession${prec?` de ${prec}`:""}`;conservPhrase="jusqu'au règlement de la succession";}
+  else{motifPhrase=prec||ph("(motif à préciser)");conservPhrase="jusqu'à nouvelle instruction";}
+  const obj=state.remise==="Complète"?"l'intégralité des clés et moyens d'accès du bien désigné ci-dessus":"les clés et moyens d'accès visés ci-dessus";
+  const lead=`Le ${fmtDate(now)}${bien?`, concernant le bien sis <b>${bien}</b>`:""}, il est procédé à l'entrée de clés suivante.`;
+  const b1=`<div class="declbox"><div class="who">Déclaration du remettant</div>Je soussigné(e) <b>${person||ph("(remettant)")}</b>, déclare remettre ce jour en dépôt à l'étude ${OFFICE} ${obj}, ${motifPhrase}.${partialClause}${idSentence("du remettant")} L'étude ${OFFICE} en est constituée dépositaire et conservera lesdites clés ${conservPhrase} ; leur sortie ultérieure fera l'objet d'un bordereau de sortie.</div>`;
+  const b2="";
+  writeDoc(lead,b1,b2,["Le remettant",""],["Pour l'étude",rep||""],`Bordereau établi en l'étude ${OFFICE} ; les photographies ont été prises séance tenante et annexées aux présentes.`);
+}
+
+
+const OFFICE="FIDAL Notaires — Paris";
+const DEFAULT_KEYS=["Clés porte d'entrée","Clés boîte aux lettres","Badge / bip Vigik","Télécommande portail / garage","Clés cave","Clés garage","Clés local vélos"];
+const IDTYPES=[["CNI","carte nationale d'identité"],["Passeport","passeport"],["Titre de séjour","titre de séjour"],["Permis","permis de conduire"]];
+const REP_GROUPS=[
+  {label:"Associés", names:["François-Xavier LAUNAIS","Pierre HERTFELDER","Jean-François DUMETZ","Nicolas DIRADOURIAN","Nathalie DEBLECKER","Nathalie JURCZAK","Stéphane DELAHAYE","Laure BISSON","Camille BARBOT","Charles GRUNBERG","Mathieu POGNAN"]},
+  {label:"Négociateurs", names:["Marie VERHAEGHE","Magali JAEGER"]},
+  {label:"Accueil", names:["Aurore GUÉRIN","Marina PLOUVIER"]},
+];
+let state={keys:DEFAULT_KEYS.map(k=>({label:k,on:false,qty:1})),remise:"Complète",motif:"acquereur",id:{type:"CNI",photo:null,time:null},photo:null,photoTime:null};
+
+function val(id){const e=document.getElementById(id);return e?(e.value||"").trim():"";}
+function ph(t){return `<span class="muted">${t}</span>`;}
+function fmtDate(d){return d.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});}
+function fmtDT(d){return fmtDate(d)+" à "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});}
+function fmtDateInput(s){if(!s)return null;return fmtDate(new Date(s+"T00:00:00"));}
+function idTypeLabel(t){return IDTYPES.find(x=>x[0]===t)[1];}
+function idSentence(who){const num=val("idNum");const photo=state.id.photo;if(!num&&!photo)return"";
+  return ` L'identité ${who} a été justifiée par ${idTypeLabel(state.id.type)}${num?` n° ${num}`:""}${photo?", dont la photographie est annexée au présent bordereau":""}.`;}
+
+function buildKeys(){const el=document.getElementById("keysList");el.innerHTML="";
+  state.keys.forEach((k,i)=>{const row=document.createElement("label");row.className="chk"+(k.on?" on":"");
+    const opts=Array.from({length:10},(_,n)=>`<option value="${n+1}" ${k.qty===n+1?"selected":""}>${n+1}</option>`).join("");
+    row.innerHTML=`<input type="checkbox" ${k.on?"checked":""}><span>${k.label}</span><span class="qty"><select ${k.on?"":"disabled"}>${opts}</select></span>`;
+    row.querySelector('input[type=checkbox]').onchange=e=>{state.keys[i].on=e.target.checked;render();};
+    row.querySelector('select').onchange=e=>{state.keys[i].qty=parseInt(e.target.value);render();};
+    el.appendChild(row);});}
+function addKey(){const inp=document.getElementById("keyAdd");const v=inp.value.trim();if(!v)return;state.keys.push({label:v,on:true,qty:1});inp.value="";render();}
+function buildRemise(){const el=document.getElementById("remiseSeg");el.innerHTML="";
+  ["Complète","Partielle"].forEach(v=>{const b=document.createElement("button");b.textContent=v;if(state.remise===v)b.className="on";
+    b.onclick=()=>{state.remise=v;document.getElementById("partialBox").classList.toggle("show",v==="Partielle");render();};el.appendChild(b);});}
+function buildRepSelect(){const sel=document.getElementById("repSelect");let html=`<option value="">— Sélectionner —</option>`;
+  REP_GROUPS.forEach(g=>{html+=`<optgroup label="${g.label}">`+g.names.map(n=>`<option value="${n}">${n}</option>`).join("")+`</optgroup>`;});
+  html+=`<option value="__manual">Saisir manuellement…</option>`;sel.innerHTML=html;}
+function buildIdSeg(){const el=document.getElementById("idTypeSeg");el.innerHTML="";
+  IDTYPES.forEach(([k])=>{const b=document.createElement("button");b.textContent=k;if(state.id.type===k)b.className="on";
+    b.onclick=()=>{state.id.type=k;render();};el.appendChild(b);});}
+
+/* clés : détail repliable */
+document.getElementById("keyAdd").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addKey();}});
+const idManualToggle=document.getElementById("idManualToggle");
+if(idManualToggle){idManualToggle.onclick=()=>{const c=document.getElementById("idManualCollapse");const o=c.classList.toggle("open");idManualToggle.textContent=o?"− Masquer la saisie manuelle":"+ Renseigner manuellement";};}
+const keysToggle=document.getElementById("keysToggle");
+keysToggle.onclick=()=>{const c=document.getElementById("keysCollapse");const o=c.classList.toggle("open");keysToggle.textContent=o?"− Masquer le détail des clés":"+ Détailler les clés et accès";};
+
+/* photos */
+document.getElementById("photoInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=ev=>{state.photo=ev.target.result;state.photoTime=new Date();
+    document.getElementById("photoLabel").textContent="Remplacer la photo";document.getElementById("photoThumb").style.display="block";
+    document.getElementById("photoImg").src=state.photo;document.getElementById("photoMeta").textContent="Prise le "+fmtDT(state.photoTime);render();};
+  r.readAsDataURL(f);});
+document.getElementById("idPhotoInput").addEventListener("change",e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=ev=>{state.id.photo=ev.target.result;state.id.time=new Date();
+    document.getElementById("idPhotoLabel").textContent="Remplacer la photo";document.getElementById("idPhotoThumb").style.display="block";
+    document.getElementById("idPhotoImg").src=state.id.photo;document.getElementById("idPhotoMeta").textContent="Prise le "+fmtDT(state.id.time);render();};
+  r.readAsDataURL(f);});
+
+/* adresse BAN */
+let acTimer=null,acItems=[],acActive=-1;
+const bienInput=document.getElementById("bien"),bienList=document.getElementById("bienList"),bienStatus=document.getElementById("bienStatus");
+function setStatus(t,cls){bienStatus.textContent=t;bienStatus.className="ac-status"+(cls?" "+cls:"");}
+function hideList(){bienList.classList.remove("show");bienList.innerHTML="";acItems=[];acActive=-1;}
+function searchAddr(q){setStatus("Recherche…","busy");
+  fetch("https://api-adresse.data.gouv.fr/search/?limit=5&autocomplete=1&q="+encodeURIComponent(q)).then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+    acItems=d.features||[];if(!acItems.length){hideList();setStatus("Adresse non reconnue dans la Base Adresse Nationale","warn");return;}
+    setStatus("");bienList.innerHTML=acItems.map((f,i)=>{const p=f.properties;return `<div class="ac-item" data-i="${i}">${p.name||p.label}<span class="ctx">${p.postcode||""} ${p.city||""}${p.context?" · "+p.context:""}</span></div>`;}).join("");
+    bienList.classList.add("show");bienList.querySelectorAll(".ac-item").forEach(el=>{el.onclick=()=>selectAddr(parseInt(el.dataset.i));});
+  }).catch(()=>{hideList();setStatus("Vérification indisponible (hors ligne) — saisie libre acceptée","warn");});}
+function selectAddr(i){const f=acItems[i];if(!f)return;bienInput.value=f.properties.label;
+  setStatus("Adresse vérifiée — Base Adresse Nationale (correspondance "+Math.round((f.properties.score||0)*100)+"%)","ok");hideList();render();}
+bienInput.addEventListener("input",()=>{const q=bienInput.value.trim();render();if(acTimer)clearTimeout(acTimer);if(q.length<4){hideList();setStatus("");return;}acTimer=setTimeout(()=>searchAddr(q),250);});
+bienInput.addEventListener("keydown",e=>{if(!bienList.classList.contains("show"))return;const items=bienList.querySelectorAll(".ac-item");
+  if(e.key==="ArrowDown"){e.preventDefault();acActive=Math.min(acActive+1,items.length-1);}else if(e.key==="ArrowUp"){e.preventDefault();acActive=Math.max(acActive-1,0);}
+  else if(e.key==="Enter"&&acActive>=0){e.preventDefault();selectAddr(acActive);return;}else if(e.key==="Escape"){hideList();return;}
+  items.forEach((el,i)=>el.classList.toggle("active",i===acActive));});
+document.addEventListener("click",e=>{if(!document.getElementById("bienAc").contains(e.target))hideList();});
+
+/* PDF / e-mail */
+function slug(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40);}
+function pdfName(){const bien=val("bien");return DOCSLUG+(bien?"-"+slug(bien):"")+".pdf";}
+function setBusy(btn,t){if(!btn)return"";const o=btn.textContent;btn.textContent=t;btn.disabled=true;return o;}
+function unBusy(btn,o){if(!btn)return;btn.textContent=o;btn.disabled=false;}
+async function buildPdf(){if(!window.html2canvas||!window.jspdf)throw new Error("libs");
+  if(document.fonts&&document.fonts.ready){try{await document.fonts.ready;}catch(e){}}
+  const canvas=await html2canvas(document.getElementById("doc"),{scale:2,backgroundColor:"#ffffff",useCORS:true});
+  const img=canvas.toDataURL("image/jpeg",0.92);const {jsPDF}=window.jspdf;const pdf=new jsPDF("p","mm","a4");
+  const pw=pdf.internal.pageSize.getWidth(),ph2=pdf.internal.pageSize.getHeight(),margin=8,usableW=pw-margin*2,pageH=ph2-margin*2;
+  const imgH=canvas.height*usableW/canvas.width;let heightLeft=imgH,position=margin;
+  pdf.addImage(img,"JPEG",margin,position,usableW,imgH);heightLeft-=pageH;
+  while(heightLeft>0){position=margin-(imgH-heightLeft);pdf.addPage();pdf.addImage(img,"JPEG",margin,position,usableW,imgH);heightLeft-=pageH;}
+  return pdf;}
+async function downloadPdf(btn){const o=setBusy(btn,"Génération…");try{const pdf=await buildPdf();pdf.save(pdfName());}catch(e){window.print();}finally{unBusy(btn,o);}}
+async function sendMail(btn){const bien=val("bien");const subject=DOCTITLE+(bien?" — "+bien:"");const body=document.getElementById("doc").innerText;const o=setBusy(btn,"Préparation…");
+  try{const pdf=await buildPdf();const file=new File([pdf.output("blob")],pdfName(),{type:"application/pdf"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:subject,text:body});}
+    else{pdf.save(pdfName());window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body+"\n\n(PDF téléchargé : à joindre au message.)");}}
+  catch(e){window.location.href="mailto:?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body+"\n\n(Pensez à joindre le PDF.)");}finally{unBusy(btn,o);}}
+function copyText(){const txt=document.getElementById("doc").innerText;const done=()=>{const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done).catch(()=>{});
+  else{const a=document.createElement("textarea");a.value=txt;document.body.appendChild(a);a.select();try{document.execCommand("copy");done();}catch(e){}document.body.removeChild(a);}}
+
+/* commun : helpers de rendu */
+function keysBlockHtml(){const remisKeys=state.keys.filter(k=>k.on);
+  if(remisKeys.length)return `<p><b>Clés et moyens d'accès concernés :</b></p><ul class="keys-list">${remisKeys.map(k=>`<li>${k.label} — ${k.qty} ${k.qty>1?"exemplaires":"exemplaire"}</li>`).join("")}</ul>`;
+  if(state.photo)return `<p><b>Clés et moyens d'accès :</b> voir la photographie annexée.</p>`;
+  return `<p class="muted">— clés et accès à renseigner : prendre la photo ou déplier le détail —</p>`;}
+function partialClauseHtml(){if(state.remise!=="Partielle")return"";const what=val("missingWhat"),who=val("missingWho"),when=fmtDateInput(val("missingWhen"));
+  return ` Ne sont pas remis ce jour : ${what||ph("(à préciser)")}${who?`, détenus par ${who}`:""}${when?`, remise prévue le ${when}`:""}.`;}
+function proofsHtml(idTag){const items=[];
+  if(state.photo)items.push(`<div class="proof-item"><img src="${state.photo}"><div class="cap">Photographie des clés — ${fmtDT(state.photoTime)}</div></div>`);
+  if(state.id.photo)items.push(`<div class="proof-item"><img src="${state.id.photo}"><div class="cap">Pièce d'identité (${idTag}) — ${fmtDT(state.id.time)}</div></div>`);
+  return items.length?`<div class="proofs">${items.join("")}</div>`:`<p class="muted">— photographie des clés à prendre —</p>`;}
+function sigBlock(s){return `<div class="s"><div class="line"></div><small>${s[0]}${s[1]?`<br>${s[1]}`:""}</small></div>`;}
+function writeDoc(lead,b1,b2,sig1,sig2,foot){
+  document.getElementById("doc").innerHTML=`<div class="head"><div class="office">${OFFICE}</div><div class="title">${DOCTITLE}</div></div>
+    <p class="lead">${lead}</p>${keysBlockHtml()}${b1}${b2}${proofsHtml(PROOFS_TAG)}
+    <div class="sigs">${sigBlock(sig1)}${sigBlock(sig2)}</div><div class="footnote">${foot}</div>`;}
+
+
+buildRepSelect();
+document.getElementById("repSelect").addEventListener("change",e=>{document.getElementById("repManual").style.display=e.target.value==="__manual"?"block":"none";render();});
+(function setupMic(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;const btn=document.getElementById("motifMic");if(!SR){btn.style.display="none";return;}
+  const recog=new SR();recog.lang="fr-FR";recog.interimResults=false;recog.maxAlternatives=1;let active=false;
+  recog.onresult=e=>{const t=e.results[0][0].transcript;const inp=document.getElementById("motifPrecis");inp.value=(inp.value?inp.value.trim()+" ":"")+t;render();};
+  recog.onend=()=>{active=false;btn.classList.remove("rec");};recog.onerror=()=>{active=false;btn.classList.remove("rec");};
+  btn.onclick=()=>{if(active){recog.stop();return;}try{recog.start();active=true;btn.classList.add("rec");}catch(e){active=false;btn.classList.remove("rec");}};})();
+["person","repManual","motifPrecis","idNum","missingWhat","missingWho","missingWhen"].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener("input",render);});
+render();
+</script>
+</body>
+</html>

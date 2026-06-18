@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COFFEE — des solutions le temps d'un café</title>
+<link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--line:#DEDCD3;--cyan:#6DD5DC;--gold:#A98A45;--urgent:#B5462F}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:30px 18px}
+  .wrap{max-width:1040px;margin:0 auto}
+  header{text-align:center;margin-bottom:10px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--urgent)}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 4px rgba(181,70,47,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:600;font-size:48px;letter-spacing:.02em;margin-top:10px}
+  .tagline{color:var(--ink-soft);font-style:italic;font-size:16px;margin-top:2px}
+  h2{font-family:'Fraunces',serif;font-weight:500;font-size:20px;margin:34px 0 14px;display:flex;align-items:center;gap:10px}
+  .soon{font-family:'Inter',sans-serif;font-style:normal;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);background:#fff;border:1px solid var(--line);padding:2px 9px;border-radius:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:16px}
+  .tile{display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:24px 16px;border-radius:21px;background:linear-gradient(155deg,#1b3a5c,#102844 55%,#0c2038);color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.06);transition:.18s;box-shadow:0 10px 28px -16px rgba(12,32,56,.75)}
+  .tile:hover{transform:translateY(-3px);box-shadow:0 16px 36px -14px rgba(12,32,56,.9)}
+  .tile .ic{width:56px;height:56px}
+  .tile .nm{font-weight:600;font-size:15px}
+  .tile .tg{font-size:12px;color:#A9C2D6}
+  .tile.soon-tile{background:#fff;color:var(--ink-soft);border:1px dashed var(--line);box-shadow:none;cursor:default}
+  .tile.soon-tile:hover{transform:none;box-shadow:none}
+  .tile.soon-tile .nm{color:var(--ink)}
+  .tile .badge{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+  footer{margin-top:36px;font-size:12px;color:var(--ink-soft);text-align:center;border-top:1px solid var(--line);padding-top:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FIDAL Apps</div>
+    <div class="wordmark">COFFEE</div>
+    <p class="tagline">Des solutions, le temps d'un café.</p>
+  </header>
+
+  <h2>Bordereaux — clés</h2>
+  <div class="grid">
+    <a class="tile" href="./coffee-cles-entree.html">
+      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><path d="M24 48 h30 v8 a2 2 0 0 1 -2 2 H26 a2 2 0 0 1 -2 -2 z"/><path d="M39 20 V44 M30 35 l9 9 l9 -9"/></g></svg>
+      <span class="nm">Entrée des clés</span><span class="tg">Les clés rentrent à l'étude</span>
+    </a>
+    <a class="tile" href="./coffee-cles-sortie.html">
+      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><path d="M24 48 h30 v8 a2 2 0 0 1 -2 2 H26 a2 2 0 0 1 -2 -2 z"/><path d="M39 44 V20 M30 29 l9 -9 l9 9"/></g></svg>
+      <span class="nm">Sortie des clés</span><span class="tg">L'étude remet les clés</span>
+    </a>
+    <a class="tile" href="./coffee-cles-directe.html">
+      <svg class="ic" viewBox="0 0 78 78"><g fill="none" stroke="#6DD5DC" stroke-width="2.6" vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="39" r="5"/><circle cx="58" cy="39" r="5"/><path d="M27 39 H51 M45 33 l6 6 l-6 6"/></g></svg>
+      <span class="nm">Remise directe</span><span class="tg">Vendeur → acquéreur</span>
+    </a>
+  </div>
+
+  <h2>Autres réflexes <span class="soon">à venir</span></h2>
+  <div class="grid">
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Entrée en jouissance différée</span><span class="badge">À venir</span></div>
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Occupation du bien</span><span class="badge">À venir</span></div>
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Dégradation du bien</span><span class="badge">À venir</span></div>
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Quotités d'acquisition</span><span class="badge">À venir</span></div>
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Versement pour compte de</span><span class="badge">À venir</span></div>
+    <div class="tile soon-tile"><svg class="ic" viewBox="0 0 78 78"><circle cx="39" cy="39" r="16" fill="none" stroke="#C9C6BC" stroke-width="2.6" stroke-dasharray="4 6"/></svg><span class="nm">Procuration</span><span class="badge">À venir</span></div>
+  </div>
+
+  <footer>COFFEE — des solutions le temps d'un café · gamme FIDAL Apps. Les liens des bordereaux fonctionneront une fois le site déployé (fichiers coffee-cles-*.html placés à la racine).</footer>
+</div>
+</body>
+</html>
