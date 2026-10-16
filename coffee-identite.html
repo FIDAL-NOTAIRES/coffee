@@ -127,7 +127,7 @@
         <tr><td>Numéro du titre</td><td><input data-k="numero" placeholder="—"></td></tr>
         <tr><td>Date d'expiration</td><td><input data-k="expiration" placeholder="JJ/MM/AAAA"></td></tr>
         <tr><td>Adresse</td><td><input data-k="adresse" placeholder="—"></td></tr>
-        <tr><td>Autres mentions</td><td><input data-k="autres" placeholder="taille, date de délivrance, autorité…"></td></tr>
+        <tr><td>Autres mentions</td><td><input data-k="autres" placeholder="n° de support, date de délivrance, autorité…"></td></tr>
       </table>
 
       <label class="fld" for="portable">Portable <small>— à la main ou à la voix</small></label>
@@ -354,6 +354,14 @@ function extraireImprime(txt){
   const nonVide = i => { while(i < lignes.length && !lignes[i]) i++; return i; };
   const estDate = l => /^\d{2}[\s\./]\d{2}[\s\./]\d{4}$/.test(l);
   const propre = l => l.replace(/[|$]/g,'').replace(/\s+/g,' ').trim();
+  const nettoieVoie = l => {
+    let v = l.replace(/[^\p{L}\d\s'’\-]/gu,' ').replace(/\s+/g,' ').trim();   // ponctuation parasite
+    v = v.replace(/^[^\d]{1,2}(?=\d)/,'');                                       // 1-2 caractères parasites devant le numéro
+    v = v.replace(/^(\d+)\s*(BIS|TER|QUATER)?\s*(?=\p{L})/u, (m,n,b) => n + (b ? ' ' + b : '') + ' ');  // « 63RUE » → « 63 RUE »
+    v = v.replace(/\b(RUE|AVENUE|BOULEVARD|PLACE|CHEMIN|IMPASSE|ALLEE|ALLÉE|ROUTE|QUAI|COURS|SQUARE|PASSAGE|RESIDENCE|RÉSIDENCE|LOTISSEMENT|HAMEAU)(DE LA|DELA|DES|DU|DE|D)?(?=\s*\p{L})/giu,
+          (m,voie,part) => voie + ' ' + (part ? part.replace(/^DELA$/i,'DE LA') + ' ' : ''));  // « RUEDE PARIS » → « RUE DE PARIS »
+    return v.replace(/\s+/g,' ').trim();
+  };
   const apresLabel = (re, nbLignes) => {
     const k = lignes.findIndex(l => re.test(l)); if(k < 0) return [];
     const res = []; let i = nonVide(k + 1);
@@ -385,10 +393,15 @@ function extraireImprime(txt){
       if(j < lignes.length && /^FRANCE\b/i.test(propre(lignes[j]))) adr.push('FRANCE');
     }
   }
-  if(adr.length) out.adresse = adr.join(', ');
+  if(adr.length){
+    adr = adr.map((l, i) => /^\d{5}\s/.test(l) ? l.replace(/[^\p{L}\d\s'’\-]/gu,' ').replace(/\s+/g,' ').trim() : (/^FRANCE$/i.test(l) ? 'FRANCE' : nettoieVoie(l))).filter(Boolean);
+    out.adresse = adr.join(', ');
+  }
   const autres = [], T = txt;
   let m;
-  if((m = T.match(/(\d[,\.]\d{2})\s*m\b/))) autres.push('Taille ' + m[1].replace('.',',') + ' m');
+  // Numéro de support (verso de la CNI 2021) : 12 caractères, 5 chiffres + 1 lettre + 6 chiffres, distinct du numéro du titre
+  const support = lignes.map(propre).find(l => /^\d{5}[A-Z]\d{6}$/.test(l)) || (T.match(/\b(\d{5}[A-Z]\d{6})\b/) || [])[1];
+  if(support) autres.push('N° de support ' + support);
   let deliv = '';
   const kd = lignes.findIndex(l => /D[ÉE]LIVRANCE|Date of issue/i.test(l));
   if(kd >= 0){ for(let i = kd; i < Math.min(lignes.length, kd + 4) && !deliv; i++){ const d = lignes[i].match(/\d{2}[\s\./]\d{2}[\s\./]\d{4}/); if(d) deliv = d[0]; } }
