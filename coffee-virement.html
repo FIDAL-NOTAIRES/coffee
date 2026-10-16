@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2238">
+<title>COFFEE · Virement non reçu</title>
+<link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--card:#FFFFFF;--line:#DEDCD3;--emerald:#2E5A4B;--emerald-d:#244A3D;--urgent:#B5462F;--gold:#A98A45;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:22px}
+  .back{display:inline-block;font-size:13px;color:var(--ink-soft);text-decoration:none;margin-bottom:12px}
+  .back:hover{color:var(--ink)}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--urgent);margin-bottom:10px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 4px rgba(181,70,47,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-.01em;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:14.5px;margin-top:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:4px}
+  .hint{color:var(--ink-soft);font-size:13px;margin-bottom:16px}
+  label.fld{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+  label.fld small{font-weight:400;text-transform:none;letter-spacing:0;color:var(--ink-soft)}
+  input[type=text],input[type=email]{width:100%;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  input:focus{outline:2px solid rgba(46,90,75,.35);border-color:var(--emerald)}
+  input.ko{border-color:var(--urgent)}
+  .choices{display:flex;flex-direction:column;gap:6px}
+  .chk{display:flex;align-items:flex-start;gap:10px;background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer}
+  .chk.on{border-color:var(--emerald);background:rgba(46,90,75,.05)}
+  .chk.off{opacity:.5;cursor:not-allowed}
+  .chk input[type=radio]{width:18px;height:18px;accent-color:var(--emerald);margin-top:2px}
+  .chk span{flex:1;font-size:14.5px}
+  .chk small{display:block;font-size:12px;color:var(--ink-soft)}
+  .note{font-size:12.5px;color:var(--ink-soft);margin-top:8px}
+  .mail{background:#FBFBF8;border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px}
+  .mail .hd{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+  .mail .hd b{color:var(--ink-soft);font-weight:600}
+  .mail .hd .warn{color:var(--urgent)}
+  .mail .body p{margin:0 0 .9em}
+  .mail .body p:last-child{margin-bottom:0}
+  .mail .sig{color:var(--ink-soft);font-size:12.5px;font-style:italic;margin-top:12px}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:160px}
+  .btn-main{background:var(--emerald);color:#fff}
+  .btn-main:hover{background:var(--emerald-d)}
+  .btn-main:disabled{background:#B9BDB7;cursor:not-allowed}
+  .btn-sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .status{font-size:12.5px;color:var(--emerald-d);margin-top:8px;min-height:16px}
+  .seen{margin-top:14px;font-size:13px}
+  .seen button{font:inherit;font-size:12.5px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;margin:4px 6px 0 0;color:var(--ink)}
+  footer{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="./index.html">&larr; COFFEE · Réflexes en séance</a>
+    <div class="eyebrow">Imprévu en séance · Argent</div>
+    <div class="wordmark">Virement non reçu</div>
+    <div class="sub">Le confrère n'a pas encore viré les fonds : on commence la lecture et on lui demande l'avis d'opéré.</div>
+  </header>
+
+  <div class="grid">
+    <!-- SAISIE -->
+    <div class="panel">
+      <h2>Dossier et destinataire</h2>
+      <div class="hint">Trois indications suffisent. Les adresses sont mémorisées sur cet appareil et reprises automatiquement à la prochaine ouverture du même dossier.</div>
+
+      <label class="fld" for="dossier">Intitulé du dossier <small>— tel qu'il figure sur le Drive, ex. Vente DUPONT / MARTIN</small></label>
+      <input type="text" id="dossier" placeholder="Vente DUPONT / MARTIN" autocomplete="off" list="dossiers-connus">
+      <datalist id="dossiers-connus"></datalist>
+
+      <label class="fld" for="confrere">Mail du confrère</label>
+      <input type="email" id="confrere" placeholder="prenom.nom@notaires.fr" autocomplete="off" inputmode="email">
+
+      <label class="fld" for="collab">Mail du collaborateur du confrère <small>— facultatif</small></label>
+      <input type="email" id="collab" placeholder="collaborateur@notaires.fr" autocomplete="off" inputmode="email">
+
+      <label class="fld">Destinataire du mail</label>
+      <div class="choices" id="choices">
+        <label class="chk on"><input type="radio" name="dest" value="confrere" checked><span>Mail du confrère</span></label>
+        <label class="chk"><input type="radio" name="dest" value="confrere_collab"><span>Mail du confrère + collaborateur<small>Le collaborateur est ajouté en destinataire direct.</small></span></label>
+        <label class="chk"><input type="radio" name="dest" value="libre"><span>Destinataire libre<small>Le mail s'ouvre pré-rempli, sans destinataire : vous le saisissez directement dans le mail.</small></span></label>
+      </div>
+
+      <label class="fld" for="compta">Service comptable <small>— toujours en copie</small></label>
+      <input type="email" id="compta" placeholder="comptabilite@…" autocomplete="off" inputmode="email">
+      <div class="note">Adresse préréglée une fois pour toutes ; elle reste en copie quel que soit le destinataire choisi.</div>
+
+      <div class="seen" id="seen"></div>
+    </div>
+
+    <!-- APERÇU -->
+    <div class="panel">
+      <h2>Le mail qui va s'ouvrir</h2>
+      <div class="hint">Texte figé de l'étude. La signature est celle de votre boîte mail.</div>
+
+      <div class="mail">
+        <div class="hd">
+          <b>À</b><span id="p-to">—</span>
+          <b>Cc</b><span id="p-cc">—</span>
+          <b>Objet</b><span id="p-subject">—</span>
+        </div>
+        <div class="body" id="p-body"></div>
+        <div class="sig">+ signature usuelle de votre boîte mail</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-main" id="open" disabled>Ouvrir le mail</button>
+        <button class="btn btn-sec" id="copy">Copier le texte</button>
+      </div>
+      <div class="status" id="status"></div>
+    </div>
+  </div>
+
+  <footer>COFFEE · FIDAL Notaires — Paris · gamme FIDAL Apps</footer>
+</div>
+
+<script>
+/* ======================================================================
+   COFFEE — Virement non reçu
+   Texte définitif arrêté le 15/10/2026 (JFD). Ne pas reformuler.
+   ====================================================================== */
+
+// Adresse du service comptable, toujours en copie.
+// À renseigner ici une fois pour toutes (elle reste modifiable à l'écran et mémorisée sur l'appareil).
+const CC_COMPTABILITE_PAR_DEFAUT = "";
+
+const SUJET_SUFFIXE = " – virement non reçu";
+
+const PARAGRAPHES = [
+  "Mon cher confrère,",
+  "Dans le cadre du dossier visé en objet, je suis en présence de l'ensemble des signataires et commence la lecture de l'acte.",
+  "J'attire votre attention sur le fait que les fonds nécessaires à la bonne signature ne sont toujours pas arrivés malgré mes relances.",
+  "Je vous remercie de m'adresser sans délai lesdits fonds, en m'en justifiant par la production de l'avis d'opéré. À défaut, nous reporterons la signature effective à une date à fixer selon les disponibilités de chacune des parties.",
+  "Je vous prie de me croire,",
+  "Votre bien dévoué confrère,"
+];
+
+const $ = id => document.getElementById(id);
+const K_DOSSIERS = "coffee.virement.dossiers";   // { intitulé: {confrere, collab} }
+const K_COMPTA   = "coffee.virement.compta";
+
+function lire(k, def){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; }catch(e){ return def; } }
+function ecrire(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+function emailOk(v){ return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+function nettoie(v){ return (v||"").trim(); }
+
+function etat(){
+  const dossier = nettoie($("dossier").value);
+  const confrere = nettoie($("confrere").value);
+  const collab = nettoie($("collab").value);
+  const compta = nettoie($("compta").value);
+  const mode = document.querySelector('input[name="dest"]:checked').value;
+
+  let to = [];
+  if(mode === "confrere") to = [confrere];
+  else if(mode === "confrere_collab") to = [confrere, collab];
+  to = to.filter(Boolean);
+
+  const cc = compta ? [compta] : [];
+  const subject = (dossier || "[Intitulé du dossier]") + SUJET_SUFFIXE;
+  const body = PARAGRAPHES.join("\n\n");
+
+  return {dossier, confrere, collab, compta, mode, to, cc, subject, body};
+}
+
+function rendre(){
+  const e = etat();
+
+  // Option « confrère + collaborateur » indisponible sans adresse de collaborateur
+  const optCollab = document.querySelector('input[value="confrere_collab"]').closest(".chk");
+  optCollab.classList.toggle("off", !e.collab);
+  if(!e.collab && e.mode === "confrere_collab"){
+    document.querySelector('input[value="confrere"]').checked = true;
+    return rendre();
+  }
+  document.querySelectorAll("#choices .chk").forEach(l => l.classList.toggle("on", l.querySelector("input").checked));
+
+  // Validation souple des adresses
+  ["confrere","collab","compta"].forEach(id => $(id).classList.toggle("ko", !emailOk($(id).value)));
+
+  // Aperçu
+  $("p-to").innerHTML = e.mode === "libre"
+    ? '<span class="warn">à saisir dans le mail</span>'
+    : (e.to.length ? e.to.join(", ") : '<span class="warn">adresse du confrère manquante</span>');
+  $("p-cc").textContent = e.cc.length ? e.cc.join(", ") : "—";
+  $("p-subject").textContent = e.subject;
+  $("p-body").innerHTML = PARAGRAPHES.map(p => "<p>" + p + "</p>").join("");
+
+  // Bouton
+  const pret = !!e.dossier
+    && (e.mode === "libre" || (e.to.length && e.to.every(emailOk)))
+    && emailOk(e.compta);
+  $("open").disabled = !pret;
+}
+
+function ouvrir(){
+  const e = etat();
+  memoriser(e);
+  const q = [];
+  if(e.cc.length) q.push("cc=" + encodeURIComponent(e.cc.join(",")));
+  q.push("subject=" + encodeURIComponent(e.subject));
+  q.push("body=" + encodeURIComponent(e.body));
+  const to = e.mode === "libre" ? "" : e.to.join(",");
+  window.location.href = "mailto:" + to + "?" + q.join("&");
+  $("status").textContent = "Mail ouvert dans votre messagerie — relisez, puis envoyez.";
+}
+
+async function copier(){
+  const e = etat();
+  const txt = "Objet : " + e.subject + "\n\n" + e.body;
+  try{ await navigator.clipboard.writeText(txt); $("status").textContent = "Texte copié."; }
+  catch(err){ $("status").textContent = "Copie impossible sur cet appareil : sélectionnez le texte à la main."; }
+}
+
+/* --- mémoire locale : dossiers connus et service comptable --- */
+function memoriser(e){
+  if(e.dossier){
+    const d = lire(K_DOSSIERS, {});
+    d[e.dossier] = {confrere: e.confrere, collab: e.collab, quand: Date.now()};
+    ecrire(K_DOSSIERS, d);
+  }
+  if(e.compta) ecrire(K_COMPTA, e.compta);
+  afficherConnus();
+}
+
+function afficherConnus(){
+  const d = lire(K_DOSSIERS, {});
+  const noms = Object.keys(d).sort((a,b) => (d[b].quand||0) - (d[a].quand||0));
+  $("dossiers-connus").innerHTML = noms.map(n => '<option value="' + n.replace(/"/g,"&quot;") + '">').join("");
+  const zone = $("seen");
+  if(!noms.length){ zone.innerHTML = ""; return; }
+  zone.innerHTML = "<span style='color:var(--ink-soft)'>Dossiers déjà traités sur cet appareil :</span><br>"
+    + noms.slice(0,8).map(n => '<button type="button" data-n="' + n.replace(/"/g,"&quot;") + '">' + n + "</button>").join("");
+  zone.querySelectorAll("button").forEach(b => b.onclick = () => { $("dossier").value = b.dataset.n; reprendre(); });
+}
+
+function reprendre(){
+  const d = lire(K_DOSSIERS, {});
+  const v = d[nettoie($("dossier").value)];
+  if(v){
+    if(v.confrere) $("confrere").value = v.confrere;
+    if(v.collab) $("collab").value = v.collab;
+  }
+  rendre();
+}
+
+/* --- amorçage --- */
+(function init(){
+  $("compta").value = lire(K_COMPTA, "") || CC_COMPTABILITE_PAR_DEFAUT;
+  afficherConnus();
+  ["dossier","confrere","collab","compta"].forEach(id => $(id).addEventListener("input", rendre));
+  $("dossier").addEventListener("change", reprendre);
+  document.querySelectorAll('input[name="dest"]').forEach(r => r.addEventListener("change", rendre));
+  $("open").addEventListener("click", ouvrir);
+  $("copy").addEventListener("click", copier);
+  rendre();
+})();
+</script>
+</body>
+</html>
