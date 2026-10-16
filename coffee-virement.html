@@ -92,8 +92,8 @@
       </div>
 
       <label class="fld" for="compta">Service comptable <small>— toujours en copie</small></label>
-      <input type="email" id="compta" placeholder="comptabilite@…" autocomplete="off" inputmode="email">
-      <div class="note">Adresse préréglée une fois pour toutes ; elle reste en copie quel que soit le destinataire choisi.</div>
+      <input type="text" id="compta" placeholder="comptabilite@…, comptabilite.client@…" autocomplete="off" inputmode="email">
+      <div class="note">Comptabilité et Comptabilité client, préréglées ; plusieurs adresses séparées par une virgule. Elles restent en copie quel que soit le destinataire choisi.</div>
 
       <div class="seen" id="seen"></div>
     </div>
@@ -130,9 +130,9 @@
    Texte définitif arrêté le 15/10/2026 (JFD). Ne pas reformuler.
    ====================================================================== */
 
-// Adresse du service comptable, toujours en copie.
-// À renseigner ici une fois pour toutes (elle reste modifiable à l'écran et mémorisée sur l'appareil).
-const CC_COMPTABILITE_PAR_DEFAUT = "";
+// Adresses du service comptable, toujours en copie (Comptabilité + Comptabilité client FIDAL Notaires, 16/10/2026).
+// Plusieurs adresses séparées par une virgule ; modifiables à l'écran, mémorisées sur l'appareil.
+const CC_COMPTABILITE_PAR_DEFAUT = "Comptabilite@fidal.notaires.fr, comptabilite.client@fidal.notaires.fr";
 
 const SUJET_SUFFIXE = " – virement non reçu";
 
@@ -153,6 +153,8 @@ function lire(k, def){ try{ const v = localStorage.getItem(k); return v ? JSON.p
 function ecrire(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 
 function emailOk(v){ return !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); }
+function listeMails(v){ return (v||"").split(/[;,]/).map(x => x.trim()).filter(Boolean); }
+function listeOk(v){ return listeMails(v).every(emailOk); }
 function nettoie(v){ return (v||"").trim(); }
 
 function etat(){
@@ -167,7 +169,7 @@ function etat(){
   else if(mode === "confrere_collab") to = [confrere, collab];
   to = to.filter(Boolean);
 
-  const cc = compta ? [compta] : [];
+  const cc = listeMails(compta);
   const subject = (dossier || "[Intitulé du dossier]") + SUJET_SUFFIXE;
   const body = PARAGRAPHES.join("\n\n");
 
@@ -187,7 +189,8 @@ function rendre(){
   document.querySelectorAll("#choices .chk").forEach(l => l.classList.toggle("on", l.querySelector("input").checked));
 
   // Validation souple des adresses
-  ["confrere","collab","compta"].forEach(id => $(id).classList.toggle("ko", !emailOk($(id).value)));
+  ["confrere","collab"].forEach(id => $(id).classList.toggle("ko", !emailOk($(id).value)));
+  $("compta").classList.toggle("ko", !listeOk($("compta").value));
 
   // Aperçu
   $("p-to").innerHTML = e.mode === "libre"
@@ -200,7 +203,7 @@ function rendre(){
   // Bouton
   const pret = !!e.dossier
     && (e.mode === "libre" || (e.to.length && e.to.every(emailOk)))
-    && emailOk(e.compta);
+    && listeOk(e.compta);
   $("open").disabled = !pret;
 }
 
