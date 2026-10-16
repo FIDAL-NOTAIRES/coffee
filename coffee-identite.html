@@ -141,7 +141,8 @@
       <div class="voice"><input type="text" id="dossier" placeholder="Vente DUPONT / MARTIN"></div>
 
       <div class="actions">
-        <button class="btn btn-main" id="partager" disabled>Partager photos + fiche</button>
+        <button class="btn btn-main" id="partager-mail" data-canal="Mail" disabled>Mail photos + fiche</button>
+        <button class="btn btn-main" id="partager-sms" data-canal="Messages" disabled>SMS photos + fiche</button>
       </div>
       <div class="actions" style="margin-top:10px">
         <a class="btn btn-sec" id="mail" href="#" target="_top">Mail (fiche seule)</a>
@@ -149,7 +150,7 @@
         <button class="btn btn-sec" id="copier">Copier la fiche</button>
       </div>
       <div class="status" id="status"></div>
-      <div class="legend">« Partager » ouvre le menu du téléphone : Mail, Messages (SMS), Drive… avec les photos jointes et la fiche. Les boutons Mail et SMS directs envoient le texte de la fiche sans photo. Après envoi, la photo n'est conservée nulle part par cette page.</div>
+      <div class="legend">Les deux premiers boutons ouvrent le menu de partage du téléphone avec les photos recadrées jointes et la fiche en texte : touchez Mail ou Messages selon le bouton choisi (une page web ne peut pas joindre des photos à un SMS autrement). Les boutons « fiche seule » partent directement, sans photo. Après envoi, la photo n'est conservée nulle part par cette page.</div>
     </div>
   </div>
 
@@ -554,7 +555,7 @@ function afficher(L){
   if(L.ancienne) v.innerHTML += '<span class="flag warn">ancien format : validité à vérifier</span>';
   $('raw').textContent = (L.brut || '').trim();
   $('raw-wrap').hidden = !L.brut;
-  $('partager').disabled = false;
+  $('partager-mail').disabled = false; $('partager-sms').disabled = false;
   verifierExpiration();
   chercherCpNaissance();
   rafraichirLiens();
@@ -683,23 +684,37 @@ $('copier').addEventListener('click', async () => {
   catch(e){ $('status').textContent = 'Copie impossible : sélectionnez le texte à la main.'; }
 });
 
-$('partager').addEventListener('click', async () => {
+async function partagerAvecPhotos(canal){
   const f = ficheActuelle();
   const base = (f.dossier ? f.dossier.replace(/[\\/:*?"<>|]+/g,'-').trim() + ' - ' : '') + 'Piece identite ' + (f.nom || 'comparant').replace(/\s+/g,'_');
-  const fichiers = [];
-  if(faces.recto) fichiers.push(new File([faces.recto.file], base + ' - recto.jpg', {type: faces.recto.file.type || 'image/jpeg'}));
-  if(faces.verso) fichiers.push(new File([faces.verso.file], base + ' - verso.jpg', {type: faces.verso.file.type || 'image/jpeg'}));
-  fichiers.push(new File([texteFiche()], base + ' - fiche.txt', {type:'text/plain'}));
-  const data = { files: fichiers, title: base, text: 'Pièce d\'identité photographiée en séance' + (f.dossier ? ' — ' + f.dossier : '') };
-  if(navigator.canShare && navigator.canShare(data)){
-    try{ await navigator.share(data); $('status').textContent = 'Partagé.'; }
-    catch(e){ if(e.name !== 'AbortError') $('status').textContent = 'Partage interrompu : ' + e.message; }
-  }else{
-    // Repli : téléchargement des fichiers
-    fichiers.forEach(fl => { const a = document.createElement('a'); a.href = URL.createObjectURL(fl); a.download = fl.name; a.click(); });
-    $('status').textContent = 'Partage natif indisponible : fichiers téléchargés, à joindre au mail ou au Drive.';
+  const photos = [];
+  if(faces.recto) photos.push(new File([faces.recto.file], base + ' - recto.jpg', {type:'image/jpeg'}));
+  if(faces.verso) photos.push(new File([faces.verso.file], base + ' - verso.jpg', {type:'image/jpeg'}));
+  const texte = texteFiche();
+  if(!navigator.share){ $('status').textContent = 'Partage natif indisponible dans ce navigateur : utilisez les boutons « fiche seule » et joignez les photos à la main.'; return; }
+  // Essai 1 : photos + texte ; essai 2 : photos seules (certaines versions refusent le mélange) ; essai 3 : texte seul
+  const essais = [
+    { files: photos, text: texte, title: base },
+    { files: photos, title: base },
+    { text: texte, title: base }
+  ];
+  for(const data of essais){
+    if(navigator.canShare && !navigator.canShare(data)) continue;
+    try{
+      await navigator.share(data);
+      $('status').textContent = (data.files ? photos.length + ' photo' + (photos.length > 1 ? 's' : '') + ' jointe' + (photos.length > 1 ? 's' : '') : 'Aucune photo jointe')
+        + (data.text ? ' avec la fiche' : ', fiche à coller séparément') + ' — choisissez ' + canal + ' dans le menu.';
+      if(!data.text){ try{ await navigator.clipboard.writeText(texte); $('status').textContent += ' Fiche copiée dans le presse-papiers.'; }catch(e){} }
+      return;
+    }catch(e){
+      if(e.name === 'AbortError'){ $('status').textContent = 'Partage annulé.'; return; }
+      console.warn('Partage refusé', data, e);
+    }
   }
-});
+  $('status').textContent = 'Le téléphone a refusé le partage des photos : utilisez « fiche seule » et joignez les photos depuis la pellicule.';
+}
+$('partager-mail').addEventListener('click', () => partagerAvecPhotos('Mail'));
+$('partager-sms').addEventListener('click', () => partagerAvecPhotos('Messages'));
 
 document.querySelectorAll('#fiche input, #portable, #email, #dossier').forEach(inp => inp.addEventListener('input', rafraichirLiens));
 document.querySelector('#fiche input[data-k="lieu"]').addEventListener('change', chercherCpNaissance);
