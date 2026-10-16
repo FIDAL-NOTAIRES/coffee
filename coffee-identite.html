@@ -356,9 +356,9 @@ function extraireImprime(txt){
   const propre = l => l.replace(/[|$]/g,'').replace(/\s+/g,' ').trim();
   const nettoieVoie = l => {
     let v = l.replace(/[^\p{L}\d\s'’\-]/gu,' ').replace(/\s+/g,' ').trim();   // ponctuation parasite
-    v = v.replace(/^[^\d]{1,2}(?=\d)/,'');                                       // 1-2 caractères parasites devant le numéro
+    v = v.replace(/^(?!LIEU|LE |LA |LES |HAMEAU|CHEMIN|ROUTE|RUE|AVENUE|PLACE|BOULEVARD|IMPASSE|ALLEE|ALLÉE|QUAI|COURS|RESIDENCE|RÉSIDENCE|SQUARE|PASSAGE|LOTISSEMENT)[^\d]{1,6}\s*(?=\d+\s*\p{L})/u,''); // mot parasite court devant le numéro (« SITE 63… », « x63… »)
     v = v.replace(/^(\d+)\s*(BIS|TER|QUATER)?\s*(?=\p{L})/u, (m,n,b) => n + (b ? ' ' + b : '') + ' ');  // « 63RUE » → « 63 RUE »
-    v = v.replace(/\b(RUE|AVENUE|BOULEVARD|PLACE|CHEMIN|IMPASSE|ALLEE|ALLÉE|ROUTE|QUAI|COURS|SQUARE|PASSAGE|RESIDENCE|RÉSIDENCE|LOTISSEMENT|HAMEAU)(DE LA|DELA|DES|DU|DE|D)?(?=\s*\p{L})/giu,
+    v = v.replace(/(?<![\p{L}])(RUE|AVENUE|BOULEVARD|PLACE|CHEMIN|IMPASSE|ALLEE|ALLÉE|ROUTE|QUAI|COURS|SQUARE|PASSAGE|RESIDENCE|RÉSIDENCE|LOTISSEMENT|HAMEAU)(DE LA|DELA|DES|DU|DE|D)?(?=\s*\p{L})/giu,
           (m,voie,part) => voie + ' ' + (part ? part.replace(/^DELA$/i,'DE LA') + ' ' : ''));  // « RUEDE PARIS » → « RUE DE PARIS »
     return v.replace(/\s+/g,' ').trim();
   };
@@ -368,7 +368,7 @@ function extraireImprime(txt){
     while(i < lignes.length && res.length < nbLignes){
       const l = propre(lignes[i]);
       if(!l) { i++; continue; }
-      if(/^(TAILLE|ADRESSE|DATE|LIEU|NOM|PR[ÉE]NOM|SEXE|NATIONALIT|N[°º]|IDFRA|REPUBLIQUE|RÉPUBLIQUE)/i.test(l)) break;
+      if(/^(TAILLE|ADRESSE|DATE|LIEU DE NAISS|NOM\b|PR[ÉE]NOM|SEXE|NATIONALIT|N[°º]|IDFRA|REPUBLIQUE|RÉPUBLIQUE)/i.test(l)) break;
       if(/^[A-Z0-9<]{25,}$/.test(l)) break;        // bande MRZ : on s'arrête
       res.push(l); i = nonVide(i + 1);
     }
@@ -377,10 +377,11 @@ function extraireImprime(txt){
   const lieu = apresLabel(/LIEU DE NAISSANCE|Place of birth/i, 1)[0];
   if(lieu && /^[A-ZÉÈÊÀÇÔ' \-]{3,}$/i.test(lieu)) out.lieu = lieu.toUpperCase();
   const pren = apresLabel(/Pr[ée]noms|Given names/i, 1)[0];
-  if(pren && /^[\p{L}' ,\-]{3,}$/u.test(pren)) out.prenoms = pren.replace(/\s*,\s*/g,', ');
+  if(pren && /^[\p{L}' ,\-]{3,}$/u.test(pren)) out.prenoms = pren.split(/\s*,\s*|\s+/).filter(Boolean).join(', ');
   const nom = apresLabel(/^NOM\b|Surname|Sumame/i, 1)[0];
   if(nom && /^[\p{L}' \-]{2,}$/u.test(nom)) out.nom = nom.toUpperCase();
-  let adr = apresLabel(/ADRESSE|Address/i, 3).filter(l => !estDate(l) && !/^[A-Z0-9]{10,}$/.test(l));
+  const bruit = l => !/\d/.test(l) && (l.length < 5 || l !== l.toUpperCase() || !/^[A-ZÉÈÊÀÇÔ' \-]+$/.test(l)) && !/\bFRANCE\b/i.test(l);
+  let adr = apresLabel(/ADRESSE|Address/i, 4).filter(l => !estDate(l) && !/^\d{5}[A-Z]\d{6}$/.test(l) && !/^[A-Z0-9<]{25,}$/.test(l) && !bruit(l)).slice(0, 3);
   adr = adr.map(l => { const m = l.match(/(?<!\d)(\d{5})\s*([A-ZÉÈÊÀÇÔ][A-ZÉÈÊÀÇÔ' \-]{1,})$/); return m ? m[1] + ' ' + m[2].trim() : l; });
   if(!adr.some(l => /^\d{5}\s/.test(l))){
     // Repli : ligne « code postal + ville », précédée de la rue, suivie éventuellement du pays
@@ -393,11 +394,11 @@ function extraireImprime(txt){
       const m = propre(lignes[kcp]).match(RE_CP);
       adr.push(m[1] + ' ' + m[2].replace(/\s{2,}.*$/,'').trim());
       let j = kcp + 1; while(j < lignes.length && !lignes[j].trim()) j++;
-      if(j < lignes.length && /^FRANCE\b/i.test(propre(lignes[j]))) adr.push('FRANCE');
+      if(j < lignes.length && /\bFRANCE\b/i.test(propre(lignes[j]))) adr.push('FRANCE');
     }
   }
   if(adr.length){
-    adr = adr.map((l, i) => /^\d{5}\s/.test(l) ? l.replace(/[^\p{L}\d\s'’\-]/gu,' ').replace(/\s+/g,' ').trim() : (/^FRANCE$/i.test(l) ? 'FRANCE' : nettoieVoie(l))).filter(Boolean);
+    adr = adr.map((l, i) => /^\d{5}\s/.test(l) ? l.replace(/[^\p{L}\d\s'’\-]/gu,' ').replace(/\s+/g,' ').trim() : (/\bFRANCE\b/i.test(l) ? 'FRANCE' : nettoieVoie(l))).filter(Boolean);
     out.adresse = adr.join(', ');
   }
   const autres = [], T = txt;
