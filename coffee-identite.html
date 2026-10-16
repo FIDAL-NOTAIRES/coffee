@@ -245,11 +245,11 @@ $('lire').addEventListener('click', async () => {
         brut.push('--- bande ' + face + ' ---\n' + r.data.text);
         const lignes = r.data.text.split('\n').map(normaliseMrz).filter(l => l.length >= 28 && (l.match(/</g)||[]).length >= 3);
         lignesMrz.push(...lignes);
-        if(lignes.length >= 2) break;         // trouvé dans le bas : inutile de relire la face entière
+        if(lignes.length >= 3) break;         // les trois lignes trouvées dans le bas : inutile de relire la face entière
       }
     }
     if(wMrz) await wMrz.terminate();
-    const mrz = decoderMrz(lignesMrz);
+    let mrz = null; // décodé après la passe 2, qui lit souvent la bande encore mieux
 
     // Passe 2 : texte imprimé (lieu de naissance, adresse, autres mentions)
     await worker.setParameters({ tessedit_char_whitelist: '', preserve_interword_spaces: '1', tessedit_pageseg_mode: Tesseract.PSM.AUTO });
@@ -261,7 +261,12 @@ $('lire').addEventListener('click', async () => {
     }
     await worker.terminate();
 
-    const imprime = extraireImprime(brut.join('\n'));
+    // Les lignes de bande lues par la passe générale complètent celles du modèle dédié
+    const texteImprime = brut.filter(b => /^--- (RECTO|VERSO) ---/.test(b)).join('\n');
+    lignesMrz.push(...texteImprime.split('\n').map(normaliseMrz).filter(l => l.length >= 26 && (l.match(/</g)||[]).length >= 3));
+    mrz = decoderMrz(lignesMrz);
+
+    const imprime = extraireImprime(texteImprime);
     lecture = fusionner(mrz, imprime, brut.join('\n'));
     afficher(lecture);
     progression(mrz ? 'Lecture terminée.' : 'Lecture terminée, bande de lecture non reconnue : fiche à compléter à la main.', 100);
@@ -292,36 +297,48 @@ function corrigeChiffres(s){ return s.replace(/O/g,'0').replace(/I/g,'1').replac
 function decoderMrz(lignes){
   if(!lignes.length) return null;
   const L = lignes.map(l => l.replace(/[^A-Z0-9<]/g,''));
-  // Passeport TD3 : 2 lignes de 44
-  const p1 = L.find(l => /^P</.test(l) && l.length >= 40);
-  if(p1){
-    const i = L.indexOf(p1), l2 = (L[i+1] || '').padEnd(44,'<');
-    const num = corrigeChiffres(l2.slice(0,9)), dob = corrigeChiffres(l2.slice(13,19)), exp = corrigeChiffres(l2.slice(21,27));
-    const ok = controle(num) === l2[9] && controle(dob) === l2[19] && controle(exp) === l2[27];
-    const nn = noms(p1.slice(5));
-    return { type:'Passeport', nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[20]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(10,13)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[p1,l2] };
+  const prendre = (l, i, n) => (l.slice(i) + '<'.repeat(n)).slice(0, n);
+
+  // --- Passeport (TD3, 2 lignes de 44) ---
+  for(const l of L){
+    const i = l.search(/P[A-Z<][A-Z]{3}[A-Z<]/); if(i < 0) continue;
+    const l1 = prendre(l, i, 44);
+    const l2src = L.find(x => /[A-Z0-9<]{9}\d[A-Z<]{3}\d{7}[MF<]\d{7}/.test(x)); if(!l2src) continue;
+    const j = l2src.search(/[A-Z0-9<]{9}\d[A-Z<]{3}\d{7}[MF<]\d{7}/);
+    const l2 = prendre(l2src, j, 44);
+    const num = l2.slice(0,9), dob = corrigeChiffres(l2.slice(13,19)), exp = corrigeChiffres(l2.slice(21,27));
+    const ok = controle(dob) === l2[19] && controle(exp) === l2[27];
+    const nn = noms(l1.slice(5));
+    return { type:'Passeport', nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[20]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(10,13)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[l1,l2] };
   }
-  // CNI format 2021 (TD1) : 3 lignes de 30, première ligne IDFRA
-  const c1 = L.find(l => /^ID/.test(l) && l.length >= 28 && l.length <= 32);
-  if(c1){
-    const i = L.indexOf(c1);
-    const l2 = (L[i+1] || '').padEnd(30,'<'), l3 = (L[i+2] || '');
-    if(l3 && l3.includes('<<') && /^\d{6}/.test(corrigeChiffres(l2.slice(0,6)))){
-      const num = corrigeChiffres(c1.slice(5,14)), dob = corrigeChiffres(l2.slice(0,6)), exp = corrigeChiffres(l2.slice(8,14));
-      const ok = controle(num) === c1[14] && controle(dob) === l2[6] && controle(exp) === l2[14];
-      const nn = noms(l3);
-      return { type:"Carte nationale d'identité (format 2021)", nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[7]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(15,18)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[c1,l2,l3] };
-    }
-    // Ancienne CNI (2 lignes de 36) : ligne 1 IDFRA + nom ; ligne 2 année/mois de délivrance, département, numéro, prénoms, date de naissance
-    const l2b = (L[i+1] || '').padEnd(36,'<');
-    if(/^\d{4}/.test(corrigeChiffres(l2b.slice(0,4)))){
-      const nom = c1.slice(5,30).replace(/</g,' ').trim();
-      const numero = corrigeChiffres(l2b.slice(0,12)).replace(/</g,'');
-      const prenoms = l2b.slice(13,27).replace(/</g,' ').trim().replace(/\s+/g,' ');
-      const dob = corrigeChiffres(l2b.slice(27,33));
-      const ok = controle(l2b.slice(0,12)) === l2b[12] && controle(dob) === l2b[33];
-      return { type:"Carte nationale d'identité (ancien format)", nom, prenoms, sexe:sexe(l2b[34]), naissance:dateNaissance(dob), nationalite:'Française', numero, expiration:'', mrzOk:ok, brut:[c1,l2b], ancienne:true };
-    }
+
+  // --- Carte nationale d'identité format 2021 (TD1, 3 lignes de 30) ---
+  const c1src = L.find(l => /ID[A-Z]{3}[A-Z0-9<]{9}/.test(l));
+  const c2src = L.find(l => /\d{7}[MF<]\d{7}[A-Z<]{3}/.test(l));
+  if(c1src && c2src){
+    const c1 = prendre(c1src, c1src.search(/ID[A-Z]{3}/), 30);
+    const l2 = prendre(c2src, c2src.search(/\d{7}[MF<]\d{7}[A-Z<]{3}/), 30);
+    // ligne des noms : contient « << », quasiment pas de chiffres, différente des deux autres
+    const l3src = L.filter(x => x !== c1src && x !== c2src && x.includes('<<') && (x.match(/\d/g)||[]).length <= 2 && (x.match(/[A-Z]/g)||[]).length >= 8)
+                   .sort((a,b) => Math.abs(a.length-30) - Math.abs(b.length-30))[0] || '';
+    const l3 = l3src ? prendre(l3src, 0, Math.min(31, l3src.length)) : '';
+    const num = c1.slice(5,14), dob = corrigeChiffres(l2.slice(0,6)), exp = corrigeChiffres(l2.slice(8,14));
+    const ok = controle(dob) === l2[6] && controle(exp) === l2[14];
+    const nn = l3 ? noms(l3) : {nom:'', prenoms:''};
+    return { type:"Carte nationale d'identité (format 2021)", nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[7]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(15,18)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[c1,l2,l3].filter(Boolean) };
+  }
+
+  // --- Ancienne carte nationale d'identité (2 lignes de 36) ---
+  const a1src = L.find(l => /ID[A-Z]{3}[A-Z<]{10,}/.test(l) && !/ID[A-Z]{3}[A-Z0-9<]*\d/.test(l.slice(0,15)));
+  const a2src = L.find(l => /^\d{12}\d[A-Z<]{14}\d{6}\d[MF]/.test(corrigeChiffres(l.slice(0,13)) + l.slice(13)));
+  if(a1src && a2src){
+    const a1 = prendre(a1src, a1src.search(/ID[A-Z]{3}/), 36), l2b = prendre(a2src, 0, 36);
+    const nom = a1.slice(5,30).replace(/</g,' ').trim();
+    const numero = corrigeChiffres(l2b.slice(0,12));
+    const prenoms = l2b.slice(13,27).replace(/</g,' ').trim().replace(/\s+/g,' ');
+    const dob = corrigeChiffres(l2b.slice(27,33));
+    const ok = controle(numero) === l2b[12] && controle(dob) === l2b[33];
+    return { type:"Carte nationale d'identité (ancien format)", nom, prenoms, sexe:sexe(l2b[34]), naissance:dateNaissance(dob), nationalite:'Française', numero, expiration:'', mrzOk:ok, brut:[a1,l2b], ancienne:true };
   }
   return null;
 }
@@ -329,14 +346,38 @@ function decoderMrz(lignes){
 /* ---------- texte imprimé : lieu de naissance, adresse, autres ---------- */
 function extraireImprime(txt){
   const out = {};
-  const T = txt.replace(/\r/g,'');
+  const lignes = txt.replace(/\r/g,'').split('\n').map(l => l.trim());
+  const nonVide = i => { while(i < lignes.length && !lignes[i]) i++; return i; };
+  const estDate = l => /^\d{2}[\s\./]\d{2}[\s\./]\d{4}$/.test(l);
+  const propre = l => l.replace(/[|$]/g,'').replace(/\s+/g,' ').trim();
+  const apresLabel = (re, nbLignes) => {
+    const k = lignes.findIndex(l => re.test(l)); if(k < 0) return [];
+    const res = []; let i = nonVide(k + 1);
+    while(i < lignes.length && res.length < nbLignes){
+      const l = propre(lignes[i]);
+      if(!l) { i++; continue; }
+      if(/^(TAILLE|ADRESSE|DATE|LIEU|NOM|PR[ÉE]NOM|SEXE|NATIONALIT|N[°º]|IDFRA|REPUBLIQUE|RÉPUBLIQUE)/i.test(l)) break;
+      if(/^[A-Z0-9<]{25,}$/.test(l)) break;        // bande MRZ : on s'arrête
+      res.push(l); i = nonVide(i + 1);
+    }
+    return res;
+  };
+  const lieu = apresLabel(/LIEU DE NAISSANCE|Place of birth/i, 1)[0];
+  if(lieu && /^[A-ZÉÈÊÀÇÔ' \-]{3,}$/i.test(lieu)) out.lieu = lieu.toUpperCase();
+  const pren = apresLabel(/Pr[ée]noms|Given names/i, 1)[0];
+  if(pren && /^[\p{L}' ,\-]{3,}$/u.test(pren)) out.prenoms = pren.replace(/\s*,\s*/g,', ');
+  const nom = apresLabel(/^NOM\b|Surname|Sumame/i, 1)[0];
+  if(nom && /^[\p{L}' \-]{2,}$/u.test(nom)) out.nom = nom.toUpperCase();
+  const adr = apresLabel(/ADRESSE|Address/i, 3).filter(l => !estDate(l));
+  if(adr.length) out.adresse = adr.join(', ');
+  const autres = [], T = txt;
   let m;
-  if((m = T.match(/(?:LIEU DE NAISSANCE|Lieu de naissance|Place of birth)\s*[:\-]?\s*\n?\s*([A-ZÉÈÊÀÇÔ' \-]{3,})/))) out.lieu = m[1].trim().replace(/\s+/g,' ');
-  if((m = T.match(/(?:ADRESSE|Adresse|Address)\s*[:\-]?\s*\n?\s*([^\n]{6,}(?:\n[^\n]{3,})?)/))) out.adresse = m[1].replace(/\n/g,', ').replace(/\s+/g,' ').trim();
-  const autres = [];
-  if((m = T.match(/(?:TAILLE|Taille|Height)\s*[:\-]?\s*(\d[,\.]\d{2}\s*m?)/))) autres.push('Taille ' + m[1]);
-  if((m = T.match(/(?:DATE DE DÉLIVRANCE|DATE DE DELIVRANCE|Date de délivrance|Date of issue|Délivrée le)\s*[:\-]?\s*(\d{2}[\s\./]\d{2}[\s\./]\d{4})/))) autres.push('Délivrée le ' + m[1].replace(/[\s\.]/g,'/'));
-  if((m = T.match(/(?:AUTORITÉ|AUTORITE|Autorité|Authority|Délivrée par|PAR)\s*[:\-]?\s*([^\n]{4,60})/))) autres.push('Autorité : ' + m[1].trim());
+  if((m = T.match(/(\d[,\.]\d{2})\s*m\b/))) autres.push('Taille ' + m[1].replace('.',',') + ' m');
+  let deliv = '';
+  const kd = lignes.findIndex(l => /D[ÉE]LIVRANCE|Date of issue/i.test(l));
+  if(kd >= 0){ for(let i = kd; i < Math.min(lignes.length, kd + 4) && !deliv; i++){ const d = lignes[i].match(/\d{2}[\s\./]\d{2}[\s\./]\d{4}/); if(d) deliv = d[0]; } }
+  if(deliv) autres.push('Délivrée le ' + deliv.replace(/[\s\.]/g,'/'));
+  if((m = T.match(/(?:AUTORIT[ÉE]|Authority|D[ée]livr[ée]e par)\s*[:\-]?\s*([^\n]{4,60})/))) autres.push('Autorité : ' + propre(m[1]));
   if(autres.length) out.autres = autres.join(' · ');
   return out;
 }
@@ -346,7 +387,13 @@ function fusionner(mrz, imp, brut){
   const cles = ['type','nom','prenoms','sexe','naissance','lieu','nationalite','numero','expiration','adresse','autres'];
   cles.forEach(k => { champs[k] = ''; sources[k] = ''; });
   if(mrz) for(const k of cles) if(mrz[k]){ champs[k] = mrz[k]; sources[k] = 'mrz'; }
-  for(const k of ['lieu','adresse','autres']) if(imp[k] && !champs[k]){ champs[k] = imp[k]; sources[k] = 'ocr'; }
+  for(const k of ['lieu','adresse','autres','nom']) if(imp[k] && !champs[k]){ champs[k] = imp[k]; sources[k] = 'ocr'; }
+  // La bande tronque les prénoms (30 caractères) : l'imprimé fait foi s'il est plus complet et cohérent
+  if(imp.prenoms){
+    const a = (champs.prenoms || '').replace(/[^A-Z]/gi,'').toUpperCase();
+    const b = imp.prenoms.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z]/gi,'').toUpperCase();
+    if(!a || (b.length > a.length && b.startsWith(a.slice(0, Math.min(4, a.length))))){ champs.prenoms = imp.prenoms; sources.prenoms = 'ocr'; }
+  }
   return { champs, sources, mrzOk: mrz ? mrz.mrzOk : null, ancienne: mrz && mrz.ancienne, brut };
 }
 
