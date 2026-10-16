@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2238">
+<title>COFFEE · Pièce d'identité</title>
+<link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Lecture optique exécutée dans le navigateur : l'image ne quitte jamais l'appareil. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--card:#FFFFFF;--line:#DEDCD3;--emerald:#2E5A4B;--emerald-d:#244A3D;--urgent:#B5462F;--gold:#A98A45;--violet:#7A6BA5;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:22px}
+  .back{display:inline-block;font-size:13px;color:var(--ink-soft);text-decoration:none;margin-bottom:12px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:10px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 4px rgba(122,107,165,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-.01em;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:14.5px;margin-top:4px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:4px}
+  .hint{color:var(--ink-soft);font-size:13px;margin-bottom:16px}
+  .shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .shot{border:1.5px dashed var(--line);border-radius:12px;min-height:150px;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden;background:#FBFBF8;cursor:pointer}
+  .shot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .shot .lbl{position:relative;z-index:1;font-size:13px;color:var(--ink-soft);padding:12px}
+  .shot .lbl b{display:block;color:var(--ink);font-size:14px;margin-bottom:4px}
+  .shot.has .lbl{background:rgba(255,255,255,.88);border-radius:8px;font-size:12px}
+  .shot input{display:none}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:150px;text-align:center;text-decoration:none;display:inline-block}
+  .btn-main{background:var(--emerald);color:#fff}
+  .btn-main:hover{background:var(--emerald-d)}
+  .btn-main:disabled,.btn-main[aria-disabled="true"]{background:#B9BDB7;cursor:not-allowed;pointer-events:none}
+  .btn-sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .prog{margin-top:12px;font-size:13px;color:var(--ink-soft);min-height:18px}
+  .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden;margin-top:6px}
+  .bar i{display:block;height:100%;width:0;background:var(--emerald);transition:width .3s}
+  .flag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+  .ok{background:rgba(46,90,75,.12);color:var(--emerald-d)}
+  .ko{background:rgba(181,70,47,.12);color:var(--urgent)}
+  .warn{background:rgba(169,138,69,.16);color:#7A6330}
+  table.f{width:100%;border-collapse:collapse;font-size:14px}
+  table.f td{padding:7px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+  table.f td:first-child{width:38%;color:var(--ink-soft);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+  table.f input{width:100%;font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px dashed transparent;padding:4px 0}
+  table.f input:focus{outline:none;border-bottom-color:var(--emerald)}
+  table.f input.src-mrz{color:var(--ink)}
+  table.f input.src-ocr{color:#5A4F86}
+  table.f input.empty{color:var(--ink-soft);font-style:italic}
+  .voice{display:flex;gap:6px;align-items:center}
+  .voice input{flex:1;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+  .mic{width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--ink-soft)}
+  .mic.on{background:rgba(181,70,47,.12);color:var(--urgent);border-color:var(--urgent)}
+  .mic svg{width:20px;height:20px}
+  label.fld{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+  label.fld small{font-weight:400;text-transform:none;letter-spacing:0}
+  .legend{font-size:12px;color:var(--ink-soft);margin-top:10px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle;margin-right:4px}
+  .status{font-size:12.5px;color:var(--emerald-d);margin-top:8px;min-height:16px}
+  .raw{margin-top:14px}
+  .raw summary{font-size:12.5px;color:var(--ink-soft);cursor:pointer}
+  .raw pre{font:12px/1.4 ui-monospace,Menlo,monospace;background:#FBFBF8;border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre-wrap;margin-top:6px}
+  footer{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="./index.html">&larr; COFFEE · Réflexes en séance</a>
+    <div class="eyebrow">Imprévu en séance · Personnes</div>
+    <div class="wordmark">Pièce d'identité</div>
+    <div class="sub">Le client n'a pas fourni de copie de sa pièce avant le rendez-vous : on la photographie, on en lit tous les éléments, on vérifie la comparution et on alimente le dossier.</div>
+  </header>
+
+  <div class="grid">
+    <!-- PRISE DE VUE -->
+    <div class="panel">
+      <h2>Photographier la pièce</h2>
+      <div class="hint">Recto et verso. Pièce à plat, bien éclairée, les deux ou trois lignes de caractères du bas (la bande de lecture) nettes et entières. Rien ne quitte le téléphone : la lecture se fait dans le navigateur.</div>
+
+      <div class="shots">
+        <label class="shot" id="shot-recto">
+          <input type="file" accept="image/*" capture="environment" data-face="recto">
+          <div class="lbl"><b>Recto</b>Appuyer pour photographier</div>
+        </label>
+        <label class="shot" id="shot-verso">
+          <input type="file" accept="image/*" capture="environment" data-face="verso">
+          <div class="lbl"><b>Verso</b>Appuyer pour photographier</div>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-main" id="lire" disabled>Lire la pièce</button>
+        <button class="btn btn-sec" id="reset">Recommencer</button>
+      </div>
+      <div class="prog" id="prog"></div>
+      <div class="bar"><i id="bar"></i></div>
+
+      <details class="raw" id="raw-wrap" hidden>
+        <summary>Texte brut lu sur la pièce</summary>
+        <pre id="raw"></pre>
+      </details>
+    </div>
+
+    <!-- FICHE -->
+    <div class="panel">
+      <h2>Fiche de comparution <span id="verdict"></span></h2>
+      <div class="hint">Tout est corrigeable au doigt. En noir, ce qui vient de la bande de lecture (contrôlé) ; en violet, ce qui vient du texte imprimé (à relire).</div>
+
+      <table class="f" id="fiche">
+        <tr><td>Type de pièce</td><td><input data-k="type" placeholder="—"></td></tr>
+        <tr><td>Nom</td><td><input data-k="nom" placeholder="—"></td></tr>
+        <tr><td>Prénoms</td><td><input data-k="prenoms" placeholder="—"></td></tr>
+        <tr><td>Sexe</td><td><input data-k="sexe" placeholder="—"></td></tr>
+        <tr><td>Date de naissance</td><td><input data-k="naissance" placeholder="JJ/MM/AAAA"></td></tr>
+        <tr><td>Lieu de naissance</td><td><input data-k="lieu" placeholder="—"></td></tr>
+        <tr><td>Nationalité</td><td><input data-k="nationalite" placeholder="—"></td></tr>
+        <tr><td>Numéro du titre</td><td><input data-k="numero" placeholder="—"></td></tr>
+        <tr><td>Date d'expiration</td><td><input data-k="expiration" placeholder="JJ/MM/AAAA"></td></tr>
+        <tr><td>Adresse</td><td><input data-k="adresse" placeholder="—"></td></tr>
+        <tr><td>Autres mentions</td><td><input data-k="autres" placeholder="taille, date de délivrance, autorité…"></td></tr>
+      </table>
+
+      <label class="fld" for="portable">Portable <small>— à la main ou à la voix</small></label>
+      <div class="voice"><input type="tel" id="portable" inputmode="tel" placeholder="06 …"><button class="mic" data-for="portable" title="Dicter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button></div>
+
+      <label class="fld" for="email">Courriel <small>— à la main ou à la voix</small></label>
+      <div class="voice"><input type="email" id="email" inputmode="email" placeholder="prenom.nom@…"><button class="mic" data-for="email" title="Dicter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button></div>
+
+      <label class="fld" for="dossier">Intitulé du dossier <small>— pour le nom des fichiers et l'objet du mail</small></label>
+      <div class="voice"><input type="text" id="dossier" placeholder="Vente DUPONT / MARTIN"></div>
+
+      <div class="actions">
+        <button class="btn btn-main" id="partager" disabled>Partager photo + fiche</button>
+        <button class="btn btn-sec" id="copier">Copier la fiche</button>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="legend">Le partage ouvre le menu du téléphone : Mail (vers le secrétariat), Drive (dossier client) ou les deux. Après envoi, la photo n'est conservée nulle part par cette page.</div>
+    </div>
+  </div>
+
+  <footer>COFFEE · FIDAL Notaires — Paris · gamme FIDAL Apps</footer>
+</div>
+
+<script>
+/* ======================================================================
+   COFFEE — Pièce d'identité en séance
+   Principes (JFD, 15-16/10/2026) : la pièce ne sort pas de l'étude (lecture
+   locale), exploitation maximale des données lues, portable et courriel
+   saisis à la main ou à la voix, sortie vers Mail et/ou Drive au choix.
+   ====================================================================== */
+
+const $ = id => document.getElementById(id);
+const faces = {recto:null, verso:null};   // {file, url}
+let lecture = null;                        // {champs, sources, mrzOk, brut}
+
+/* ---------- prise de vue ---------- */
+document.querySelectorAll('.shot input').forEach(inp => {
+  inp.addEventListener('change', () => {
+    const f = inp.files && inp.files[0]; if(!f) return;
+    const face = inp.dataset.face;
+    if(faces[face] && faces[face].url) URL.revokeObjectURL(faces[face].url);
+    faces[face] = {file:f, url:URL.createObjectURL(f)};
+    const box = $('shot-' + face);
+    box.classList.add('has');
+    let img = box.querySelector('img');
+    if(!img){ img = document.createElement('img'); box.prepend(img); }
+    img.src = faces[face].url;
+    box.querySelector('.lbl').innerHTML = '<b>' + (face === 'recto' ? 'Recto' : 'Verso') + '</b>Reprendre';
+    $('lire').disabled = !(faces.recto || faces.verso);
+  });
+});
+
+$('reset').addEventListener('click', () => location.reload());
+
+/* ---------- lecture optique locale ---------- */
+async function imageVersCanvas(file, maxW){
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, maxW / bmp.width);
+  const c = document.createElement('canvas');
+  c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  const ctx = c.getContext('2d');
+  ctx.drawImage(bmp, 0, 0, c.width, c.height);
+  // contraste léger, niveaux de gris : aide la lecture de la bande
+  const d = ctx.getImageData(0, 0, c.width, c.height), p = d.data;
+  for(let i = 0; i < p.length; i += 4){
+    let g = 0.299*p[i] + 0.587*p[i+1] + 0.114*p[i+2];
+    g = Math.max(0, Math.min(255, (g - 128) * 1.25 + 128));
+    p[i] = p[i+1] = p[i+2] = g;
+  }
+  ctx.putImageData(d, 0, 0);
+  return c;
+}
+
+function progression(txt, pct){
+  $('prog').textContent = txt || '';
+  $('bar').style.width = (pct || 0) + '%';
+}
+
+$('lire').addEventListener('click', async () => {
+  $('lire').disabled = true;
+  try{
+    progression('Préparation de la lecture locale…', 3);
+    const worker = await Tesseract.createWorker(['fra','eng'], 1, {
+      logger: m => { if(m.status === 'recognizing text') progression('Lecture en cours…', 20 + Math.round(m.progress * 70)); else if(m.status) progression(m.status === 'loading language traineddata' ? 'Chargement du modèle de lecture (une seule fois)…' : 'Préparation…', 10); }
+    });
+
+    const brut = [];
+    // Passe 1 : bande de lecture (caractères MRZ uniquement) sur chaque face
+    await worker.setParameters({ tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<', preserve_interword_spaces: '0' });
+    let lignesMrz = [];
+    for(const face of ['recto','verso']){
+      if(!faces[face]) continue;
+      const c = await imageVersCanvas(faces[face].file, 1800);
+      const r = await worker.recognize(c);
+      const lignes = r.data.text.split('\n').map(l => l.replace(/\s+/g,'').toUpperCase()).filter(l => l.length >= 28 && (l.match(/</g)||[]).length >= 4);
+      lignesMrz.push(...lignes);
+    }
+    const mrz = decoderMrz(lignesMrz);
+
+    // Passe 2 : texte imprimé (lieu de naissance, adresse, autres mentions)
+    await worker.setParameters({ tessedit_char_whitelist: '', preserve_interword_spaces: '1' });
+    for(const face of ['recto','verso']){
+      if(!faces[face]) continue;
+      const c = await imageVersCanvas(faces[face].file, 1800);
+      const r = await worker.recognize(c);
+      brut.push('--- ' + face.toUpperCase() + ' ---\n' + r.data.text);
+    }
+    await worker.terminate();
+
+    const imprime = extraireImprime(brut.join('\n'));
+    lecture = fusionner(mrz, imprime, brut.join('\n'));
+    afficher(lecture);
+    progression(mrz ? 'Lecture terminée.' : 'Lecture terminée, bande de lecture non reconnue : fiche à compléter à la main.', 100);
+  }catch(err){
+    console.error(err);
+    progression('Lecture impossible sur cet appareil : ' + (err.message || err), 0);
+  }
+  $('lire').disabled = false;
+});
+
+/* ---------- décodage de la bande de lecture (MRZ) ---------- */
+const POIDS = [7,3,1];
+function val(ch){ if(ch === '<') return 0; if(ch >= '0' && ch <= '9') return +ch; return ch.charCodeAt(0) - 55; }
+function controle(s){ let t = 0; for(let i = 0; i < s.length; i++) t += val(s[i]) * POIDS[i % 3]; return String(t % 10); }
+function dateMrz(s){ // AAMMJJ -> JJ/MM/AAAA (siècle estimé)
+  if(!/^\d{6}$/.test(s)) return '';
+  const aa = +s.slice(0,2), mm = s.slice(2,4), jj = s.slice(4,6);
+  const now = new Date().getFullYear() % 100;
+  return jj + '/' + mm + '/' + aa;
+}
+function dateNaissance(s){ if(!/^\d{6}$/.test(s)) return ''; const aa = +s.slice(0,2); const an = aa > (new Date().getFullYear() % 100) ? 1900 + aa : 2000 + aa; return s.slice(4,6) + '/' + s.slice(2,4) + '/' + an; }
+function dateExpiration(s){ if(!/^\d{6}$/.test(s)) return ''; return s.slice(4,6) + '/' + s.slice(2,4) + '/' + (2000 + +s.slice(0,2)); }
+function noms(s){ const [n, p] = s.split('<<'); return { nom: (n||'').replace(/</g,' ').trim(), prenoms: (p||'').replace(/</g,' ').trim().replace(/\s+/g,' ') }; }
+function nat(c){ return ({FRA:'Française'})[c] || c; }
+function sexe(c){ return c === 'M' ? 'Masculin' : c === 'F' ? 'Féminin' : ''; }
+function corrigeChiffres(s){ return s.replace(/O/g,'0').replace(/I/g,'1').replace(/Z/g,'2').replace(/S/g,'5').replace(/B/g,'8'); }
+
+function decoderMrz(lignes){
+  if(!lignes.length) return null;
+  const L = lignes.map(l => l.replace(/[^A-Z0-9<]/g,''));
+  // Passeport TD3 : 2 lignes de 44
+  const p1 = L.find(l => /^P</.test(l) && l.length >= 40);
+  if(p1){
+    const i = L.indexOf(p1), l2 = (L[i+1] || '').padEnd(44,'<');
+    const num = corrigeChiffres(l2.slice(0,9)), dob = corrigeChiffres(l2.slice(13,19)), exp = corrigeChiffres(l2.slice(21,27));
+    const ok = controle(num) === l2[9] && controle(dob) === l2[19] && controle(exp) === l2[27];
+    const nn = noms(p1.slice(5));
+    return { type:'Passeport', nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[20]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(10,13)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[p1,l2] };
+  }
+  // CNI format 2021 (TD1) : 3 lignes de 30, première ligne IDFRA
+  const c1 = L.find(l => /^ID/.test(l) && l.length >= 28 && l.length <= 32);
+  if(c1){
+    const i = L.indexOf(c1);
+    const l2 = (L[i+1] || '').padEnd(30,'<'), l3 = (L[i+2] || '');
+    if(l3 && l3.includes('<<') && /^\d{6}/.test(corrigeChiffres(l2.slice(0,6)))){
+      const num = corrigeChiffres(c1.slice(5,14)), dob = corrigeChiffres(l2.slice(0,6)), exp = corrigeChiffres(l2.slice(8,14));
+      const ok = controle(num) === c1[14] && controle(dob) === l2[6] && controle(exp) === l2[14];
+      const nn = noms(l3);
+      return { type:"Carte nationale d'identité (format 2021)", nom:nn.nom, prenoms:nn.prenoms, sexe:sexe(l2[7]), naissance:dateNaissance(dob), nationalite:nat(l2.slice(15,18)), numero:num.replace(/</g,''), expiration:dateExpiration(exp), mrzOk:ok, brut:[c1,l2,l3] };
+    }
+    // Ancienne CNI (2 lignes de 36) : ligne 1 IDFRA + nom ; ligne 2 année/mois de délivrance, département, numéro, prénoms, date de naissance
+    const l2b = (L[i+1] || '').padEnd(36,'<');
+    if(/^\d{4}/.test(corrigeChiffres(l2b.slice(0,4)))){
+      const nom = c1.slice(5,30).replace(/</g,' ').trim();
+      const numero = corrigeChiffres(l2b.slice(0,12)).replace(/</g,'');
+      const prenoms = l2b.slice(13,27).replace(/</g,' ').trim().replace(/\s+/g,' ');
+      const dob = corrigeChiffres(l2b.slice(27,33));
+      const ok = controle(l2b.slice(0,12)) === l2b[12] && controle(dob) === l2b[33];
+      return { type:"Carte nationale d'identité (ancien format)", nom, prenoms, sexe:sexe(l2b[34]), naissance:dateNaissance(dob), nationalite:'Française', numero, expiration:'', mrzOk:ok, brut:[c1,l2b], ancienne:true };
+    }
+  }
+  return null;
+}
+
+/* ---------- texte imprimé : lieu de naissance, adresse, autres ---------- */
+function extraireImprime(txt){
+  const out = {};
+  const T = txt.replace(/\r/g,'');
+  let m;
+  if((m = T.match(/(?:LIEU DE NAISSANCE|Lieu de naissance|Place of birth)\s*[:\-]?\s*\n?\s*([A-ZÉÈÊÀÇÔ' \-]{3,})/))) out.lieu = m[1].trim().replace(/\s+/g,' ');
+  if((m = T.match(/(?:ADRESSE|Adresse|Address)\s*[:\-]?\s*\n?\s*([^\n]{6,}(?:\n[^\n]{3,})?)/))) out.adresse = m[1].replace(/\n/g,', ').replace(/\s+/g,' ').trim();
+  const autres = [];
+  if((m = T.match(/(?:TAILLE|Taille|Height)\s*[:\-]?\s*(\d[,\.]\d{2}\s*m?)/))) autres.push('Taille ' + m[1]);
+  if((m = T.match(/(?:DATE DE DÉLIVRANCE|DATE DE DELIVRANCE|Date de délivrance|Date of issue|Délivrée le)\s*[:\-]?\s*(\d{2}[\s\./]\d{2}[\s\./]\d{4})/))) autres.push('Délivrée le ' + m[1].replace(/[\s\.]/g,'/'));
+  if((m = T.match(/(?:AUTORITÉ|AUTORITE|Autorité|Authority|Délivrée par|PAR)\s*[:\-]?\s*([^\n]{4,60})/))) autres.push('Autorité : ' + m[1].trim());
+  if(autres.length) out.autres = autres.join(' · ');
+  return out;
+}
+
+function fusionner(mrz, imp, brut){
+  const champs = {}, sources = {};
+  const cles = ['type','nom','prenoms','sexe','naissance','lieu','nationalite','numero','expiration','adresse','autres'];
+  cles.forEach(k => { champs[k] = ''; sources[k] = ''; });
+  if(mrz) for(const k of cles) if(mrz[k]){ champs[k] = mrz[k]; sources[k] = 'mrz'; }
+  for(const k of ['lieu','adresse','autres']) if(imp[k] && !champs[k]){ champs[k] = imp[k]; sources[k] = 'ocr'; }
+  return { champs, sources, mrzOk: mrz ? mrz.mrzOk : null, ancienne: mrz && mrz.ancienne, brut };
+}
+
+/* ---------- affichage ---------- */
+function afficher(L){
+  document.querySelectorAll('#fiche input').forEach(inp => {
+    const k = inp.dataset.k;
+    inp.value = L.champs[k] || '';
+    inp.className = L.sources[k] ? 'src-' + L.sources[k] : '';
+  });
+  const v = $('verdict');
+  if(L.mrzOk === true) v.innerHTML = '<span class="flag ok">bande de lecture vérifiée</span>';
+  else if(L.mrzOk === false) v.innerHTML = '<span class="flag warn">bande lue, contrôle en défaut : relire</span>';
+  else v.innerHTML = '<span class="flag ko">bande non reconnue</span>';
+  if(L.ancienne) v.innerHTML += '<span class="flag warn">ancien format : validité à vérifier</span>';
+  $('raw').textContent = (L.brut || '').trim();
+  $('raw-wrap').hidden = !L.brut;
+  $('partager').disabled = false;
+  verifierExpiration();
+}
+
+function verifierExpiration(){
+  const e = ficheActuelle().expiration;
+  const m = e && e.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(!m) return;
+  const d = new Date(+m[3], +m[2]-1, +m[1]);
+  if(d < new Date()) $('verdict').innerHTML += '<span class="flag ko">pièce périmée</span>';
+}
+
+function ficheActuelle(){
+  const f = {};
+  document.querySelectorAll('#fiche input').forEach(inp => f[inp.dataset.k] = inp.value.trim());
+  f.portable = $('portable').value.trim(); f.email = $('email').value.trim(); f.dossier = $('dossier').value.trim();
+  return f;
+}
+
+function texteFiche(){
+  const f = ficheActuelle();
+  const lib = {type:"Type de pièce", nom:"Nom", prenoms:"Prénoms", sexe:"Sexe", naissance:"Date de naissance", lieu:"Lieu de naissance", nationalite:"Nationalité", numero:"Numéro du titre", expiration:"Date d'expiration", adresse:"Adresse", autres:"Autres mentions", portable:"Portable", email:"Courriel"};
+  const lignes = [];
+  lignes.push('FICHE DE COMPARUTION — pièce photographiée en séance' + (f.dossier ? ' — ' + f.dossier : ''));
+  lignes.push('Motif : copie de la pièce non fournie avant le rendez-vous.');
+  lignes.push('Lecture locale le ' + new Date().toLocaleDateString('fr-FR') + (lecture && lecture.mrzOk === true ? ' — bande de lecture vérifiée.' : lecture && lecture.mrzOk === false ? ' — bande lue, contrôle en défaut.' : ' — bande non reconnue, saisie manuelle.'));
+  lignes.push('');
+  for(const k of Object.keys(lib)) if(f[k]) lignes.push(lib[k] + ' : ' + f[k]);
+  lignes.push('');
+  lignes.push('Comparution suggérée :');
+  lignes.push(comparution(f));
+  return lignes.join('\n');
+}
+
+function comparution(f){
+  const civ = f.sexe === 'Féminin' ? 'Madame' : f.sexe === 'Masculin' ? 'Monsieur' : '';
+  const nom = [f.prenoms ? capitaliser(f.prenoms) : '', f.nom ? f.nom.toUpperCase() : ''].filter(Boolean).join(' ');
+  const naiss = f.naissance ? ', né' + (f.sexe === 'Féminin' ? 'e' : '') + (f.lieu ? ' à ' + capitaliser(f.lieu) : '') + ' le ' + f.naissance : '';
+  const nat = f.nationalite ? ', de nationalité ' + f.nationalite.toLowerCase() : '';
+  const adr = f.adresse ? ', demeurant ' + f.adresse : '';
+  return [civ, nom].filter(Boolean).join(' ') + naiss + nat + adr + '.';
+}
+function capitaliser(s){ return s.toLowerCase().replace(/(^|[\s\-'])(\p{L})/gu, (m,a,b) => a + b.toUpperCase()); }
+
+/* ---------- saisie à la voix ---------- */
+const Reco = window.SpeechRecognition || window.webkitSpeechRecognition;
+document.querySelectorAll('.mic').forEach(btn => {
+  if(!Reco){ btn.title = 'Dictée indisponible dans ce navigateur : utilisez le micro du clavier.'; btn.style.opacity = .4; return; }
+  btn.addEventListener('click', () => {
+    const cible = $(btn.dataset.for);
+    const r = new Reco(); r.lang = 'fr-FR'; r.interimResults = false; r.maxAlternatives = 1;
+    btn.classList.add('on');
+    r.onresult = ev => {
+      let t = ev.results[0][0].transcript.trim();
+      if(btn.dataset.for === 'portable') t = t.replace(/\D/g,'').replace(/(\d{2})(?=\d)/g,'$1 ');
+      if(btn.dataset.for === 'email') t = t.toLowerCase().replace(/\s*(arobase|at)\s*/g,'@').replace(/\s*point\s*/g,'.').replace(/\s*tiret\s*/g,'-').replace(/\s+/g,'');
+      cible.value = t;
+    };
+    r.onend = () => btn.classList.remove('on');
+    r.onerror = () => { btn.classList.remove('on'); $('status').textContent = 'Dictée interrompue, saisissez à la main.'; };
+    r.start();
+  });
+});
+
+/* ---------- sorties ---------- */
+$('copier').addEventListener('click', async () => {
+  try{ await navigator.clipboard.writeText(texteFiche()); $('status').textContent = 'Fiche copiée.'; }
+  catch(e){ $('status').textContent = 'Copie impossible : sélectionnez le texte à la main.'; }
+});
+
+$('partager').addEventListener('click', async () => {
+  const f = ficheActuelle();
+  const base = (f.dossier ? f.dossier.replace(/[\\/:*?"<>|]+/g,'-').trim() + ' - ' : '') + 'Piece identite ' + (f.nom || 'comparant').replace(/\s+/g,'_');
+  const fichiers = [];
+  if(faces.recto) fichiers.push(new File([faces.recto.file], base + ' - recto.jpg', {type: faces.recto.file.type || 'image/jpeg'}));
+  if(faces.verso) fichiers.push(new File([faces.verso.file], base + ' - verso.jpg', {type: faces.verso.file.type || 'image/jpeg'}));
+  fichiers.push(new File([texteFiche()], base + ' - fiche.txt', {type:'text/plain'}));
+  const data = { files: fichiers, title: base, text: 'Pièce d\'identité photographiée en séance' + (f.dossier ? ' — ' + f.dossier : '') };
+  if(navigator.canShare && navigator.canShare(data)){
+    try{ await navigator.share(data); $('status').textContent = 'Partagé.'; }
+    catch(e){ if(e.name !== 'AbortError') $('status').textContent = 'Partage interrompu : ' + e.message; }
+  }else{
+    // Repli : téléchargement des fichiers
+    fichiers.forEach(fl => { const a = document.createElement('a'); a.href = URL.createObjectURL(fl); a.download = fl.name; a.click(); });
+    $('status').textContent = 'Partage natif indisponible : fichiers téléchargés, à joindre au mail ou au Drive.';
+  }
+});
+
+$('dossier').addEventListener('input', () => {});
+</script>
+</body>
+</html>
