@@ -201,6 +201,17 @@ async function imageVersCanvas(file, maxW){
   return c;
 }
 
+function decoupeBas(c, part){
+  const h = Math.round(c.height * part), out = document.createElement('canvas');
+  out.width = c.width; out.height = h;
+  out.getContext('2d').drawImage(c, 0, c.height - h, c.width, h, 0, 0, c.width, h);
+  return out;
+}
+// Normalise une ligne lue : majuscules, suppression des espaces, chevrons mal lus (« , K , c , ( ) ramenés à <
+function normaliseMrz(l){
+  return l.toUpperCase().replace(/[«»]/g,'<').replace(/\s+/g,'').replace(/[^A-Z0-9<]/g,'<');
+}
+
 function progression(txt, pct){
   $('prog').textContent = txt || '';
   $('bar').style.width = (pct || 0) + '%';
@@ -210,25 +221,38 @@ $('lire').addEventListener('click', async () => {
   $('lire').disabled = true;
   try{
     progression('Préparation de la lecture locale…', 3);
-    const worker = await Tesseract.createWorker(['fra','eng'], 1, {
-      logger: m => { if(m.status === 'recognizing text') progression('Lecture en cours…', 20 + Math.round(m.progress * 70)); else if(m.status) progression(m.status === 'loading language traineddata' ? 'Chargement du modèle de lecture (une seule fois)…' : 'Préparation…', 10); }
-    });
+    const journal = m => { if(m.status === 'recognizing text') progression('Lecture en cours…', 20 + Math.round(m.progress * 70)); else if(m.status) progression(/loading language/.test(m.status) ? 'Chargement du modèle de lecture (une seule fois)…' : 'Préparation…', 10); };
 
     const brut = [];
-    // Passe 1 : bande de lecture (caractères MRZ uniquement) sur chaque face
-    await worker.setParameters({ tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<', preserve_interword_spaces: '0' });
     let lignesMrz = [];
+
+    // Passe 1 : bande de lecture avec le modèle dédié MRZ (police OCR-B, chevrons),
+    // hébergé dans ce dépôt (mrz.traineddata.gz). Repli sur le modèle général si indisponible.
+    let wMrz = null;
+    try{
+      wMrz = await Tesseract.createWorker('mrz', 1, { langPath: new URL('./', location.href).href, gzip: true, logger: journal });
+      await wMrz.setParameters({ tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK, preserve_interword_spaces: '0' });
+    }catch(e){ console.warn('Modèle MRZ indisponible, repli :', e); wMrz = null; }
+
+    const worker = await Tesseract.createWorker(['fra','eng'], 1, { logger: journal });
+
     for(const face of ['recto','verso']){
       if(!faces[face]) continue;
-      const c = await imageVersCanvas(faces[face].file, 1800);
-      const r = await worker.recognize(c);
-      const lignes = r.data.text.split('\n').map(l => l.replace(/\s+/g,'').toUpperCase()).filter(l => l.length >= 28 && (l.match(/</g)||[]).length >= 4);
-      lignesMrz.push(...lignes);
+      const plein = await imageVersCanvas(faces[face].file, 1800);
+      const bas = decoupeBas(plein, 0.45);       // la bande est toujours dans le bas de la face
+      for(const zone of [bas, plein]){
+        const r = wMrz ? await wMrz.recognize(zone) : (await worker.setParameters({ tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<' }), await worker.recognize(zone));
+        brut.push('--- bande ' + face + ' ---\n' + r.data.text);
+        const lignes = r.data.text.split('\n').map(normaliseMrz).filter(l => l.length >= 28 && (l.match(/</g)||[]).length >= 3);
+        lignesMrz.push(...lignes);
+        if(lignes.length >= 2) break;         // trouvé dans le bas : inutile de relire la face entière
+      }
     }
+    if(wMrz) await wMrz.terminate();
     const mrz = decoderMrz(lignesMrz);
 
     // Passe 2 : texte imprimé (lieu de naissance, adresse, autres mentions)
-    await worker.setParameters({ tessedit_char_whitelist: '', preserve_interword_spaces: '1' });
+    await worker.setParameters({ tessedit_char_whitelist: '', preserve_interword_spaces: '1', tessedit_pageseg_mode: Tesseract.PSM.AUTO });
     for(const face of ['recto','verso']){
       if(!faces[face]) continue;
       const c = await imageVersCanvas(faces[face].file, 1800);
