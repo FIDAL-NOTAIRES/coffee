@@ -381,14 +381,17 @@ function extraireImprime(txt){
   const nom = apresLabel(/^NOM\b|Surname|Sumame/i, 1)[0];
   if(nom && /^[\p{L}' \-]{2,}$/u.test(nom)) out.nom = nom.toUpperCase();
   let adr = apresLabel(/ADRESSE|Address/i, 3).filter(l => !estDate(l) && !/^[A-Z0-9]{10,}$/.test(l));
-  if(!adr.some(l => /\b\d{5}\b/.test(l))){
+  adr = adr.map(l => { const m = l.match(/(?<!\d)(\d{5})\s*([A-ZÉÈÊÀÇÔ][A-ZÉÈÊÀÇÔ' \-]{1,})$/); return m ? m[1] + ' ' + m[2].trim() : l; });
+  if(!adr.some(l => /^\d{5}\s/.test(l))){
     // Repli : ligne « code postal + ville », précédée de la rue, suivie éventuellement du pays
-    const kcp = lignes.findIndex(l => /^\d{5}\s+[A-ZÉÈÊÀÇÔ' \-]{2,}/.test(propre(l)));
+    const RE_CP = /(?<!\d)(\d{5})\s*([A-ZÉÈÊÀÇÔ][A-ZÉÈÊÀÇÔ' \-]{1,})/;
+    const kcp = lignes.findIndex(l => { const m = propre(l).match(RE_CP); return m && !estDate(propre(l)) && !/^\d{5}[A-Z]\d{6}$/.test(propre(l).replace(/\s/g,'')); });
     if(kcp >= 0){
       adr = [];
       let i = kcp - 1; while(i >= 0 && !lignes[i].trim()) i--;
-      if(i >= 0 && /\d/.test(lignes[i]) && !estDate(propre(lignes[i])) && !/ADRESSE|Address/i.test(lignes[i])) adr.push(propre(lignes[i]));
-      adr.push(propre(lignes[kcp]).replace(/\s{2,}.*$/,''));
+      if(i >= 0 && /\d/.test(lignes[i]) && !estDate(propre(lignes[i])) && !/ADRESSE|Address/i.test(lignes[i]) && !RE_CP.test(propre(lignes[i]))) adr.push(propre(lignes[i]));
+      const m = propre(lignes[kcp]).match(RE_CP);
+      adr.push(m[1] + ' ' + m[2].replace(/\s{2,}.*$/,'').trim());
       let j = kcp + 1; while(j < lignes.length && !lignes[j].trim()) j++;
       if(j < lignes.length && /^FRANCE\b/i.test(propre(lignes[j]))) adr.push('FRANCE');
     }
