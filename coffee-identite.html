@@ -140,11 +140,15 @@
       <div class="voice"><input type="text" id="dossier" placeholder="Vente DUPONT / MARTIN"></div>
 
       <div class="actions">
-        <button class="btn btn-main" id="partager" disabled>Partager photo + fiche</button>
+        <button class="btn btn-main" id="partager" disabled>Partager photos + fiche</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <a class="btn btn-sec" id="mail" href="#" target="_top">Mail (fiche seule)</a>
+        <a class="btn btn-sec" id="sms" href="#" target="_top">SMS (fiche seule)</a>
         <button class="btn btn-sec" id="copier">Copier la fiche</button>
       </div>
       <div class="status" id="status"></div>
-      <div class="legend">Le partage ouvre le menu du téléphone : Mail (vers le secrétariat), Drive (dossier client) ou les deux. Après envoi, la photo n'est conservée nulle part par cette page.</div>
+      <div class="legend">« Partager » ouvre le menu du téléphone : Mail, Messages (SMS), Drive… avec les photos jointes et la fiche. Les boutons Mail et SMS directs envoient le texte de la fiche sans photo. Après envoi, la photo n'est conservée nulle part par cette page.</div>
     </div>
   </div>
 
@@ -368,7 +372,19 @@ function extraireImprime(txt){
   if(pren && /^[\p{L}' ,\-]{3,}$/u.test(pren)) out.prenoms = pren.replace(/\s*,\s*/g,', ');
   const nom = apresLabel(/^NOM\b|Surname|Sumame/i, 1)[0];
   if(nom && /^[\p{L}' \-]{2,}$/u.test(nom)) out.nom = nom.toUpperCase();
-  const adr = apresLabel(/ADRESSE|Address/i, 3).filter(l => !estDate(l));
+  let adr = apresLabel(/ADRESSE|Address/i, 3).filter(l => !estDate(l) && !/^[A-Z0-9]{10,}$/.test(l));
+  if(!adr.some(l => /\b\d{5}\b/.test(l))){
+    // Repli : ligne « code postal + ville », précédée de la rue, suivie éventuellement du pays
+    const kcp = lignes.findIndex(l => /^\d{5}\s+[A-ZÉÈÊÀÇÔ' \-]{2,}/.test(propre(l)));
+    if(kcp >= 0){
+      adr = [];
+      let i = kcp - 1; while(i >= 0 && !lignes[i].trim()) i--;
+      if(i >= 0 && /\d/.test(lignes[i]) && !estDate(propre(lignes[i])) && !/ADRESSE|Address/i.test(lignes[i])) adr.push(propre(lignes[i]));
+      adr.push(propre(lignes[kcp]).replace(/\s{2,}.*$/,''));
+      let j = kcp + 1; while(j < lignes.length && !lignes[j].trim()) j++;
+      if(j < lignes.length && /^FRANCE\b/i.test(propre(lignes[j]))) adr.push('FRANCE');
+    }
+  }
   if(adr.length) out.adresse = adr.join(', ');
   const autres = [], T = txt;
   let m;
@@ -388,6 +404,11 @@ function fusionner(mrz, imp, brut){
   cles.forEach(k => { champs[k] = ''; sources[k] = ''; });
   if(mrz) for(const k of cles) if(mrz[k]){ champs[k] = mrz[k]; sources[k] = 'mrz'; }
   for(const k of ['lieu','adresse','autres','nom']) if(imp[k] && !champs[k]){ champs[k] = imp[k]; sources[k] = 'ocr'; }
+  // Le nom imprimé contrôle celui de la bande (caractère parasite en tête, lettre mal lue)
+  if(imp.nom && champs.nom && champs.nom !== imp.nom){
+    const a = champs.nom.replace(/\s+/g,''), b = imp.nom.replace(/\s+/g,'');
+    if(a.endsWith(b) || b.endsWith(a) || a.includes(b)){ champs.nom = imp.nom; sources.nom = 'mrz'; }
+  }
   // La bande tronque les prénoms (30 caractères) : l'imprimé fait foi s'il est plus complet et cohérent
   if(imp.prenoms){
     const a = (champs.prenoms || '').replace(/[^A-Z]/gi,'').toUpperCase();
@@ -413,6 +434,8 @@ function afficher(L){
   $('raw-wrap').hidden = !L.brut;
   $('partager').disabled = false;
   verifierExpiration();
+  chercherCpNaissance();
+  rafraichirLiens();
 }
 
 function verifierExpiration(){
@@ -445,15 +468,72 @@ function texteFiche(){
   return lignes.join('\n');
 }
 
+const MOIS = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const PARTICULES = new Set(['de','du','des','la','le','les','l','d','et','en','sur','sous','aux','au','à','a']);
+const VOIES = /^(rue|avenue|av|boulevard|bd|place|pl|all[ée]e|chemin|ch|impasse|imp|route|rte|quai|cours|square|sq|passage|villa|cit[ée]|sente|ruelle|faubourg|fg|r[ée]sidence|lotissement|hameau|lieu-dit|zone|zac|za|zi|bis|ter|quater)$/i;
+function dateEnLettres(d){ const m = d && d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if(!m) return d || '…'; return (+m[1]) + (m[1] === '01' ? 'er' : '') + ' ' + MOIS[+m[2]-1] + ' ' + m[3]; }
+function nomDeVoie(s){
+  // « 63 RUE DE PARIS » → « 63 rue de Paris » : voie et particules en minuscules, noms avec majuscule initiale
+  return s.trim().split(/\s+/).map((w, i) => {
+    const bas = w.toLowerCase();
+    if(/^\d/.test(w)) return bas;
+    if(VOIES.test(bas) || PARTICULES.has(bas.replace(/'$/,''))) return bas;
+    const ap = bas.match(/^([dl])['’](.+)$/); if(ap) return ap[1] + "'" + ap[2].replace(/(^|[\-])(\p{L})/gu, (m,a,b) => a + b.toUpperCase());
+    return bas.replace(/(^|[\-'])(\p{L})/gu, (m,a,b) => a + b.toUpperCase());
+  }).join(' ').replace(/\bd' (\p{L})/gu, "d'$1").replace(/\bl' (\p{L})/gu, "l'$1");
+}
+function decomposerAdresse(adr){
+  // Retourne {voie, cp, commune, pays, etranger}
+  const parts = (adr || '').split(/\s*,\s*/).filter(Boolean);
+  let voie = '', cp = '', commune = '', pays = '';
+  for(const pt of parts){
+    const m = pt.match(/^(\d{5})\s+(.+)$/);
+    if(m && !cp){ cp = m[1]; commune = m[2]; continue; }
+    if(/^(FRANCE|BELGIQUE|SUISSE|LUXEMBOURG|MONACO|ALLEMAGNE|ITALIE|ESPAGNE|ROYAUME-UNI|PORTUGAL|PAYS-BAS|[A-Z]{4,})$/i.test(pt) && !/\d/.test(pt) && cp){ pays = pt.toUpperCase(); continue; }
+    if(!voie) voie = pt; else voie += ', ' + pt;
+  }
+  const etranger = (pays && pays !== 'FRANCE') || (!cp && parts.length > 1 && !/\b\d{5}\b/.test(adr || ''));
+  return {voie, cp, commune, pays, etranger};
+}
 function comparution(f){
-  const civ = f.sexe === 'Féminin' ? 'Madame' : f.sexe === 'Masculin' ? 'Monsieur' : '';
-  const nom = [f.prenoms ? capitaliser(f.prenoms) : '', f.nom ? f.nom.toUpperCase() : ''].filter(Boolean).join(' ');
-  const naiss = f.naissance ? ', né' + (f.sexe === 'Féminin' ? 'e' : '') + (f.lieu ? ' à ' + capitaliser(f.lieu) : '') + ' le ' + f.naissance : '';
-  const nat = f.nationalite ? ', de nationalité ' + f.nationalite.toLowerCase() : '';
-  const adr = f.adresse ? ', demeurant ' + f.adresse : '';
-  return [civ, nom].filter(Boolean).join(' ') + naiss + nat + adr + '.';
+  const A = decomposerAdresse(f.adresse);
+  const prenoms = f.prenoms ? capitaliser(f.prenoms).replace(/\s*,\s*/g,', ') : '[prénoms]';
+  const l1 = prenoms + ' ' + (f.nom ? f.nom.toUpperCase() : '[NOM]');
+  const l2 = 'Demeurant à ' + (A.commune ? A.commune.toUpperCase() : '[COMMUNE]') + (A.cp ? ' (' + A.cp + ')' : '') + (A.voie ? ', ' + nomDeVoie(A.voie) : '') + (A.pays && A.pays !== 'FRANCE' ? ', ' + capitaliser(A.pays) : '');
+  const cpN = (lecture && lecture.cpNaissance) || '';
+  const l3 = 'Né' + (f.sexe === 'Féminin' ? 'e' : '') + ' le ' + dateEnLettres(f.naissance) + ' à ' + (f.lieu ? f.lieu.toUpperCase() : '[LIEU]') + (cpN ? ' (' + cpN + ')' : ' (code postal à compléter)');
+  const l4 = '(situation matrimoniale à préciser)';
+  const l5 = 'De nationalité ' + (f.nationalite ? f.nationalite.toLowerCase() : '[à préciser]');
+  const l6 = (A.etranger ? 'Non résident' : 'Résident') + ' au sens de la réglementation fiscale';
+  return [l1, l2, l3, l4, l5, l6].map(l => l === l4 ? l : l + ' (à confirmer)').join('\n');
 }
 function capitaliser(s){ return s.toLowerCase().replace(/(^|[\s\-'])(\p{L})/gu, (m,a,b) => a + b.toUpperCase()); }
+
+/* ---------- code postal du lieu de naissance (référentiel public des communes ; seul le nom de la commune est transmis) ---------- */
+async function chercherCpNaissance(){
+  const lieu = ficheActuelle().lieu; if(!lieu || !lecture) return;
+  const nom = lieu.replace(/\s*\(.*\)\s*$/,'').trim();
+  try{
+    const r = await fetch('https://geo.api.gouv.fr/communes?nom=' + encodeURIComponent(nom) + '&fields=nom,codesPostaux,codeDepartement&boost=population&limit=5');
+    const arr = await r.json();
+    const norm = x => x.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+    const exact = arr.find(c => norm(c.nom) === norm(nom)) || arr[0];
+    if(exact && exact.codesPostaux && exact.codesPostaux.length){
+      lecture.cpNaissance = exact.codesPostaux.length === 1 ? exact.codesPostaux[0] : exact.codesPostaux[0] + (exact.codesPostaux.length > 1 ? ' ou ' + exact.codesPostaux.slice(1,3).join(' / ') : '');
+    } else lecture.cpNaissance = '';
+  }catch(e){ lecture.cpNaissance = ''; }
+  rafraichirLiens();
+}
+
+/* ---------- liens Mail et SMS (fiche seule) ---------- */
+function rafraichirLiens(){
+  const f = ficheActuelle();
+  const sujet = (f.dossier ? f.dossier + ' – ' : '') + 'Pièce d\'identité ' + (f.nom || '');
+  const corps = texteFiche();
+  $('mail').href = 'mailto:?subject=' + encodeURIComponent(sujet) + '&body=' + encodeURIComponent(corps);
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  $('sms').href = 'sms:' + (ios ? '&' : '?') + 'body=' + encodeURIComponent(corps);
+}
 
 /* ---------- saisie à la voix ---------- */
 const Reco = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -499,7 +579,9 @@ $('partager').addEventListener('click', async () => {
   }
 });
 
-$('dossier').addEventListener('input', () => {});
+document.querySelectorAll('#fiche input, #portable, #email, #dossier').forEach(inp => inp.addEventListener('input', rafraichirLiens));
+document.querySelector('#fiche input[data-k="lieu"]').addEventListener('change', chercherCpNaissance);
+rafraichirLiens();
 </script>
 </body>
 </html>
