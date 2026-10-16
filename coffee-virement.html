@@ -48,10 +48,10 @@
   .mail .body p:last-child{margin-bottom:0}
   .mail .sig{color:var(--ink-soft);font-size:12.5px;font-style:italic;margin-top:12px}
   .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:160px}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:160px;text-align:center;text-decoration:none;display:inline-block}
   .btn-main{background:var(--emerald);color:#fff}
   .btn-main:hover{background:var(--emerald-d)}
-  .btn-main:disabled{background:#B9BDB7;cursor:not-allowed}
+  .btn-main[aria-disabled="true"]{background:#B9BDB7;cursor:not-allowed;pointer-events:none}
   .btn-sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
   .status{font-size:12.5px;color:var(--emerald-d);margin-top:8px;min-height:16px}
   .seen{margin-top:14px;font-size:13px}
@@ -114,7 +114,7 @@
       </div>
 
       <div class="actions">
-        <button class="btn btn-main" id="open" disabled>Ouvrir le mail</button>
+        <a class="btn btn-main" id="open" href="#" target="_top" aria-disabled="true">Ouvrir le mail</a>
         <button class="btn btn-sec" id="copy">Copier le texte</button>
       </div>
       <div class="status" id="status"></div>
@@ -204,19 +204,27 @@ function rendre(){
   const pret = !!e.dossier
     && (e.mode === "libre" || (e.to.length && e.to.every(emailOk)))
     && listeOk(e.compta);
-  $("open").disabled = !pret;
+  // Le bouton est un vrai lien : sur iPhone (y compris dans le cadre du lanceur ou en
+  // application d'écran d'accueil) seul un lien mailto tapé par l'utilisateur ouvre Mail.
+  $("open").setAttribute("aria-disabled", pret ? "false" : "true");
+  $("open").href = pret ? lienMailto(e) : "#";
 }
 
-function ouvrir(){
-  const e = etat();
-  memoriser(e);
+function lienMailto(e){
   const q = [];
   if(e.cc.length) q.push("cc=" + encodeURIComponent(e.cc.join(",")));
   q.push("subject=" + encodeURIComponent(e.subject));
   q.push("body=" + encodeURIComponent(e.body));
   const to = e.mode === "libre" ? "" : e.to.join(",");
-  window.location.href = "mailto:" + to + "?" + q.join("&");
-  $("status").textContent = "Mail ouvert dans votre messagerie — relisez, puis envoyez.";
+  return "mailto:" + to + "?" + q.join("&");
+}
+
+function ouvrir(ev){
+  const e = etat();
+  if($("open").getAttribute("aria-disabled") === "true"){ ev.preventDefault(); return; }
+  memoriser(e);
+  $("status").textContent = "Mail ouvert dans votre messagerie — relisez, puis envoyez. Si rien ne s'ouvre, utilisez « Copier le texte ».";
+  // on laisse le navigateur suivre le lien mailto lui-même
 }
 
 async function copier(){
