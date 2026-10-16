@@ -25,27 +25,23 @@
   .tb-title .wordmark{font-family:Georgia,serif;font-size:29px;font-weight:700;letter-spacing:.04em;line-height:1.05}
   .tb-title .subtitle{color:#6DD5DC;letter-spacing:.2em;font-size:11.5px;text-transform:uppercase;margin-top:5px;font-weight:600}
   .tb-spacer{flex:1}
-  .tb-ref{text-align:right;font-size:12px;line-height:1.55;color:#A9C2D6}
-  .tb-ref .r1{color:var(--ocre);font-weight:700}
-  @media(max-width:760px){.topbar{flex-wrap:wrap;gap:12px}.tb-div,.tb-spacer{display:none}.tb-ref{text-align:left;width:100%}.tb-title .wordmark{font-size:25px}}
+  @media(max-width:760px){.topbar{flex-wrap:wrap;gap:12px}.tb-div,.tb-spacer{display:none}.tb-title .wordmark{font-size:25px}}
 
   /* MENU DE MATIÈRES */
   #menu .menu-head{padding:24px 0 2px}
   #menu .mh-title{font-family:Georgia,serif;font-size:22px;font-weight:700;color:var(--navy)}
   #menu .mh-sub{color:var(--muted);font-size:13.5px;margin-top:2px}
-  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:14px 0 32px}
-  @media(max-width:760px){.mgrid{grid-template-columns:1fr}}
+  .mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:14px 0 32px}
+  @media(max-width:860px){.mgrid{grid-template-columns:1fr}}
   .mcard{position:relative;text-align:left;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);cursor:pointer;font-family:inherit;padding:0;transition:.16s;width:100%;display:block}
   .mcard:hover{transform:translateY(-2px);box-shadow:0 16px 30px -20px rgba(15,34,56,.55);border-color:#D8D5CD}
   .mcard .band{height:62px;background-color:var(--c);background-image:linear-gradient(100deg,rgba(0,0,0,.16),rgba(255,255,255,.42))}
   .mcard .micon{position:absolute;left:18px;top:38px;width:46px;height:46px;border-radius:12px;background:#fff;display:grid;place-items:center;box-shadow:0 3px 8px rgba(15,34,56,.18)}
   .mcard .micon svg{width:24px;height:24px;color:var(--c)}
   .mcard .body{padding:30px 18px 16px}
-  .mcard .mt{font-weight:700;font-size:16px;color:var(--navy)}
+  .mcard .mt{font-weight:700;font-size:17px;color:var(--navy)}
   .mcard .md{font-size:13px;color:var(--muted);margin-top:3px}
   .mcard .mfoot{font-size:12px;color:#9aa0a8;margin-top:11px}
-  .mcard.inert{cursor:default}
-  .mcard.inert:hover{transform:none;box-shadow:none;border-color:var(--line)}
 
   /* FIL D'ARIANE */
   .crumb{padding:18px 0 0;font-size:13px;color:var(--muted)}
@@ -54,12 +50,14 @@
   .crumb .sep{margin:0 8px;color:#C4C2BA}
   .crumb .cur{color:var(--ink);font-weight:600}
 
-  h2.sec{display:flex;align-items:center;gap:11px;font-family:"Segoe UI",system-ui,sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#1f5a60;margin:18px 0 16px;padding:10px 14px;background:#33838B14;border-left:3px solid #33838B;border-radius:0 10px 10px 0}
+  /* TITRE DE SOUS-ENSEMBLE */
+  h2.sec{display:flex;align-items:center;gap:11px;font-family:"Segoe UI",system-ui,sans-serif;font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sc,#1f5a60);margin:18px 0 16px;padding:10px 14px;background:color-mix(in srgb,var(--c,#33838B) 8%,transparent);border-left:3px solid var(--c,#33838B);border-radius:0 10px 10px 0}
   h2.sec .sb-ic{flex:0 0 auto;width:32px;height:32px;border-radius:10px;background:#fff;display:grid;place-items:center;box-shadow:0 1px 3px rgba(15,34,56,.12)}
-  h2.sec .sb-ic svg{width:19px;height:19px;display:block}
+  h2.sec .sb-ic svg{width:19px;height:19px;display:block;color:var(--c,#33838B)}
+  h2.sec .cnt{margin-left:auto;font-size:11px;letter-spacing:.04em;text-transform:none;color:#9aa0a8;font-weight:500}
 
   /* GRILLE DE CARTES */
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px;padding-bottom:36px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px;padding-bottom:30px}
   .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 18px 18px 22px;text-decoration:none;color:inherit;display:block;overflow:hidden;transition:.16s}
   .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c,#33838B)}
   .card.live{cursor:pointer}
@@ -88,150 +86,161 @@
 
 <div class="wrap">
 
-  <!-- MENU DES MATIÈRES -->
+  <!-- MENU DES TROIS MATIÈRES -->
   <div id="menu">
     <div class="menu-head">
-      <div class="mh-title">Outils par matière</div>
-      <div class="mh-sub">Choisissez une matière pour accéder aux outils.</div>
+      <div class="mh-title">Un imprévu en séance ?</div>
+      <div class="mh-sub">Choisissez la matière de l'acte que vous recevez : toutes les options y sont.</div>
     </div>
-    <div class="mgrid">
-      <div class="mcard inert" style="--c:#5E9079"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M15.8 19a5.5 5.5 0 0 0-2.1-4.3"/></svg></div><div class="body"><div class="mt">Famille</div><div class="md">Donations, successions, régimes matrimoniaux et partages.</div><div class="mfoot">5 outils &middot; 2 disponibles</div></div></div>
-
-      <div class="mcard inert" style="--c:#C99A2E"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg></div><div class="body"><div class="mt">Patrimoine technique</div><div class="md">Évaluation, démembrement et fiscalité patrimoniale.</div><div class="mfoot">5 outils &middot; 1 disponible</div></div></div>
-
-      <button class="mcard" style="--c:#2E8B92" onclick="openImmo()"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/><path d="M10 19v-4h4v4"/></svg></div><div class="body"><div class="mt">Immobilier</div><div class="md">Frais d'acquisition et opérations de vente.</div><div class="mfoot">4 disponibles &middot; réflexes en séance</div></div></button>
-
-      <button class="mcard" style="--c:#1FA3AD" onclick="openImmoTech()"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg></div><div class="body"><div class="mt">Immobilier technique</div><div class="md">Fiscalité et opérations immobilières spécialisées.</div><div class="mfoot">4 outils &middot; 1 disponible</div></div></button>
-
-      <div class="mcard inert" style="--c:#E07A1F"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></div><div class="body"><div class="mt">Droit notarial des affaires</div><div class="md">Cessions, sociétés et baux commerciaux.</div><div class="mfoot">4 outils</div></div></div>
-
-      <div class="mcard inert" style="--c:#3B6BA5"><div class="band"></div><div class="micon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg></div><div class="body"><div class="mt">Opérations à l'international</div><div class="md">Actes transfrontaliers, non-résidents, apostille et légalisation.</div><div class="mfoot">4 outils &middot; 1 disponible</div></div></div>
-    </div>
+    <div class="mgrid" id="mgrid"></div>
   </div>
 
-  <!-- IMMOBILIER : RÉFLEXES EN SÉANCE -->
-  <div id="home" class="hidden">
-    <div class="crumb"><a onclick="backMenu()">Accueil</a><span class="sep">&rsaquo;</span><span class="cur">Immobilier</span></div>
-    <h2 class="sec"><span class="sb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#33838B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h12v4a4 4 0 0 1 -4 4H8a4 4 0 0 1 -4 -4z"/><path d="M16 9h2.2a2.3 2.3 0 0 1 0 4.6H16"/><path d="M7 6c.6 -.8 .6 -1.4 0 -2.2M11 6c.6 -.8 .6 -1.4 0 -2.2"/></svg></span>Réflexes en séance</h2>
-    <div class="grid">
-
-      <div class="card live" style="--c:#33838B" onclick="show('cles')">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3.5"/><path d="M10.5 10.5 L20 20 M17.5 17.5 l2 -2 M15 15 l2 -2"/></svg>
-        <div class="nm">Bordereaux — clés</div>
-        <div class="ds">Entrée, sortie et remise directe des clés.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </div>
-
-      <a class="card live" style="--c:#2E8B92" href="https://pret-particulier.vercel.app/">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/><circle cx="12" cy="14.5" r="2.6"/><path d="M12 13.4v2.2M11.1 14.5h1.8"/></svg>
-        <div class="nm">Simulateur de prêt</div>
-        <div class="ds">Mensualités, TAEG, garanties (PPD, hypothèque, caution) et exports Word/PDF.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-      <div class="card soon" style="--c:#5E9079"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Entrée en jouissance différée</div><div class="ds">Occupation avant transfert de propriété.</div>
-      </div>
-
-      <div class="card soon" style="--c:#3B6BA5"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Occupation du bien</div><div class="ds">Constat d'occupation à la remise.</div>
-      </div>
-
-      <div class="card soon" style="--c:#E07A1F"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Dégradation du bien</div><div class="ds">Constat d'état et réserves.</div>
-      </div>
-
-      <div class="card soon" style="--c:#C99A2E"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Quotités d'acquisition</div><div class="ds">Répartition entre acquéreurs.</div>
-      </div>
-
-      <a class="card live" style="--c:#B5462F" href="./coffee-virement.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9l9 6 9-6"/><path d="M17 3v4M15 5h4" opacity="0.8"/></svg>
-        <div class="nm">Virement non reçu</div><div class="ds">Mail au confrère : on commence la lecture, avis d'opéré dans l'heure.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-      <a class="card live" style="--c:#7A6BA5" href="./coffee-identite.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16.5c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 9h5M14 12.5h5M14 16h3"/></svg>
-        <div class="nm">Pièce d'identité</div><div class="ds">Photo en séance, lecture locale, fiche de comparution, envoi au dossier.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-      <div class="card soon" style="--c:#1FA3AD"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Versement pour compte de</div><div class="ds">Reçu de versement par un tiers.</div>
-      </div>
-
-      <div class="card soon" style="--c:#7A6BA5"><span class="badge">À venir</span>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-        <div class="nm">Procuration</div><div class="ds">Réflexe procuration en séance.</div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- BORDEREAUX — CLÉS -->
-  <div id="cles" class="hidden">
-    <div class="crumb"><a onclick="backMenu()">Accueil</a><span class="sep">&rsaquo;</span><a onclick="show('home')">Immobilier</a><span class="sep">&rsaquo;</span><span class="cur">Bordereaux — clés</span></div>
-    <h2 class="sec"><span class="sb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#33838B" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3.5"/><path d="M10.5 10.5 L20 20 M17.5 17.5 l2 -2 M15 15 l2 -2"/></svg></span>Bordereaux — clés</h2>
-    <div class="grid">
-
-      <a class="card live" style="--c:#33838B" href="./coffee-cles-entree.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15h14v3a1 1 0 0 1 -1 1H6a1 1 0 0 1 -1 -1z"/><path d="M12 4V13M8.5 9.5 12 13l3.5 -3.5"/></svg>
-        <div class="nm">Entrée des clés</div><div class="ds">Les clés rentrent à l'étude (dépôt).</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-      <a class="card live" style="--c:#33838B" href="./coffee-cles-sortie.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15h14v3a1 1 0 0 1 -1 1H6a1 1 0 0 1 -1 -1z"/><path d="M12 13V4M8.5 7.5 12 4l3.5 3.5"/></svg>
-        <div class="nm">Sortie des clés</div><div class="ds">L'étude remet les clés au destinataire.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-      <a class="card live" style="--c:#33838B" href="./coffee-cles-directe.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="12" r="2.2"/><path d="M8 12h8M13 9l3 3-3 3"/></svg>
-        <div class="nm">Remise directe</div><div class="ds">Vendeur &rarr; acquéreur, l'étude témoin.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-    </div>
-  </div>
-
-  <!-- IMMOBILIER TECHNIQUE -->
-  <div id="immotech" class="hidden">
-    <div class="crumb"><a onclick="backMenu()">Accueil</a><span class="sep">&rsaquo;</span><span class="cur">Immobilier technique</span></div>
-    <h2 class="sec"><span class="sb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#1FA3AD" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="8" rx="1"/><path d="M7 8v3M11 8v4M15 8v3M19 8v4"/></svg></span>Immobilier technique</h2>
-    <div class="grid">
-
-      <a class="card live" style="--c:#1FA3AD" href="https://pret-pro.vercel.app/">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20V6a1.5 1.5 0 0 1 1.5-1.5h7A1.5 1.5 0 0 1 15 6v14"/><path d="M15 10h3a1.5 1.5 0 0 1 1.5 1.5V20"/><path d="M3.5 20h17"/><path d="M8 8h2M8 11.5h2M8 15h2" opacity="0.7"/></svg>
-        <div class="nm">Simulateur de prêt professionnel</div>
-        <div class="ds">Amortissable, in fine, différé — garanties, TAEG et coût net après IS.</div>
-        <span class="go">Ouvrir &rarr;</span>
-      </a>
-
-    </div>
-  </div>
+  <!-- PAGES DE MATIÈRE (générées) -->
+  <div id="pages"></div>
 
   <footer>COFFEE &middot; FIDAL Notaires — Paris &middot; gamme FIDAL Apps</footer>
 </div>
 
 <script>
-  function setView(v){
-    document.getElementById('menu').classList.toggle('hidden', v!=='menu');
-    document.getElementById('home').classList.toggle('hidden', v!=='home');
-    document.getElementById('cles').classList.toggle('hidden', v!=='cles');
-    document.getElementById('immotech').classList.toggle('hidden', v!=='immotech');
-    window.scrollTo(0,0);
-  }
-  function backMenu(){ setView('menu'); }
-  function openImmo(){ setView('home'); }
-  function openImmoTech(){ setView('immotech'); }
-  function show(id){ setView(id); }
+/* ============================================================
+   ARBORESCENCE COFFEE — tranchée le 16/10/2026
+   Trois matières ; cartes transverses dupliquées dans chacune.
+   Pour activer une carte : remplacer soon:true par href:"…".
+   ============================================================ */
+
+const ICONS = {
+  home:  '<path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/><path d="M10 19v-4h4v4"/>',
+  famille:'<circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6M15.8 19a5.5 5.5 0 0 0-2.1-4.3"/>',
+  affaires:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  id:    '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16.5c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 9h5M14 12.5h5M14 16h3"/>',
+  proc:  '<path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4"/><path d="M10 13h5M10 16.5h3"/><path d="M9.5 9.5l1.2 1.2 2.3-2.4"/>',
+  mail:  '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9l9 6 9-6"/>',
+  clause:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  cles:  '<circle cx="8" cy="8" r="3.5"/><path d="M10.5 10.5 L20 20 M17.5 17.5 l2 -2 M15 15 l2 -2"/>',
+  pret:  '<path d="M4 11.5 12 5l8 6.5"/><path d="M6 10.5V19h12v-8.5"/><circle cx="12" cy="14.5" r="2.6"/><path d="M12 13.4v2.2M11.1 14.5h1.8"/>',
+  pretpro:'<path d="M5 20V6a1.5 1.5 0 0 1 1.5-1.5h7A1.5 1.5 0 0 1 15 6v14"/><path d="M15 10h3a1.5 1.5 0 0 1 1.5 1.5V20"/><path d="M3.5 20h17"/>',
+  calc:  '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01M8.5 15h.01M12 15h.01M15.5 15h.01M8.5 18.5h.01M12 18.5h.01M15.5 18.5h.01"/>',
+  plume: '<path d="M19 4c-5 0-9 3-11 8l-3 7 7-3c5-2 8-6 8-11z"/><path d="M8 16l5-5"/>',
+  euro:  '<path d="M17.5 7.5A6 6 0 0 0 8 10.5 6 6 0 0 0 17.5 16.5"/><path d="M5 11h9M5 14h8"/>',
+  agence:'<path d="M3 20h18"/><path d="M5 20V9l7-5 7 5v11"/><path d="M9 20v-6h6v6"/><path d="M12 4v4"/>',
+  tampon:'<path d="M9 9V5a3 3 0 0 1 6 0v4"/><rect x="5" y="9" width="14" height="6" rx="1.5"/><path d="M7 15v4h10v-4"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/>',
+  people:'<circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.5"/><path d="M2.5 19a5.5 5.5 0 0 1 11 0M13.5 19a4.5 4.5 0 0 1 8 0"/>',
+  bail:  '<path d="M4 20V8l8-5 8 5v12"/><path d="M4 20h16"/><path d="M9 20v-5h6v5"/><path d="M8 11h2M14 11h2"/>',
+};
+const svg = (k,cls) => `<svg class="${cls||''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>`;
+
+/* Cartes transverses, dupliquées dans chaque matière (arbitrage du 16/10 : en séance, on entre par la matière et on y trouve tout). */
+const TRANSVERSES = () => ({ name:"Comparants", icon:"people", color:"#7A6BA5", cards:[
+  { nm:"Pièce d'identité", ds:"Photo en séance, lecture locale, fiche de comparution, envoi au dossier.", icon:"id", color:"#7A6BA5", href:"./coffee-identite.html" },
+  { nm:"Procuration d'urgence", ds:"Comparant absent : glissé de l'acte, choix du comparant, procuration prête à signer.", icon:"proc", color:"#7A6BA5", soon:true },
+]});
+
+const MATIERES = [
+  {
+    id:"immo", name:"Immobilier", color:"#2E8B92", icon:"home",
+    desc:"Ventes et prêts : le bien, l'argent, les autres intervenants.",
+    sections:[
+      TRANSVERSES(),
+      { name:"Le bien immobilier", icon:"home", color:"#2E8B92", cards:[
+        { nm:"Sinistre découvert en séance", ds:"Clause dans l'acte : situation, diligences du vendeur, séquestre et levée.", icon:"clause", color:"#E07A1F", soon:true },
+        { nm:"Inscription ou saisie non purgée", ds:"Mail au créancier (décompte, mainlevée) et séquestre sur le prix.", icon:"mail", color:"#B5462F", soon:true },
+        { nm:"État daté manquant ou périmé", ds:"Mail au syndic sous 24 h et provision pour charges séquestrée.", icon:"mail", color:"#C99A2E", soon:true },
+        { nm:"Bien non libéré", ds:"Mobilier ou encombrants : clause, délai au vendeur, séquestre forfaitaire.", icon:"clause", color:"#5E9079", soon:true },
+        { nm:"Diagnostic périmé ou manquant", ds:"Clause d'information et de renonciation ; mail d'appui au diagnostiqueur en option.", icon:"clause", color:"#3B6BA5", soon:true },
+      ]},
+      { name:"L'argent", icon:"euro", color:"#B5462F", cards:[
+        { nm:"Virement non reçu", ds:"Mail au confrère : on commence la lecture, avis d'opéré dans l'heure.", icon:"mail", color:"#B5462F", href:"./coffee-virement.html" },
+        { nm:"Origine des fonds", ds:"Fonds arrivés, attestation de la banque manquante : mail à la banque, sinon report.", icon:"mail", color:"#C99A2E", soon:true },
+      ]},
+      { name:"Les autres intervenants", icon:"agence", color:"#E07A1F", cards:[
+        { nm:"Commission d'agence", ds:"Payer ou séquestrer, courrier à l'agence, contrôle des montants acte / mandat.", icon:"agence", color:"#E07A1F", soon:true },
+      ]},
+      { name:"Clés et prêts", icon:"cles", color:"#33838B", cards:[
+        { nm:"Entrée des clés", ds:"Les clés rentrent à l'étude (dépôt).", icon:"cles", color:"#33838B", href:"./coffee-cles-entree.html" },
+        { nm:"Sortie des clés", ds:"L'étude remet les clés au destinataire.", icon:"cles", color:"#33838B", href:"./coffee-cles-sortie.html" },
+        { nm:"Remise directe", ds:"Vendeur → acquéreur, l'étude témoin.", icon:"cles", color:"#33838B", href:"./coffee-cles-directe.html" },
+        { nm:"Simulateur de prêt", ds:"Mensualités, TAEG, garanties et exports Word/PDF.", icon:"pret", color:"#2E8B92", href:"https://pret-particulier.vercel.app/" },
+        { nm:"Simulateur de prêt professionnel", ds:"Amortissable, in fine, différé — coût net après IS.", icon:"pretpro", color:"#1FA3AD", href:"https://pret-pro.vercel.app/" },
+      ]},
+    ]
+  },
+  {
+    id:"famille", name:"Famille", color:"#5E9079", icon:"famille",
+    desc:"Successions, libéralités, régimes matrimoniaux.",
+    sections:[
+      TRANSVERSES(),
+      { name:"Succession", icon:"calc", color:"#5E9079", cards:[
+        { nm:"Vérifier la déclaration", ds:"Glissé de la déclaration ou de l'attestation : calculs contrôlés, une valeur modifiée → droits, attestation, émoluments.", icon:"calc", color:"#5E9079", soon:true },
+      ]},
+      { name:"Libéralités", icon:"plume", color:"#C99A2E", cards:[
+        { nm:"Vérifier la donation", ds:"Glissé de l'acte : abattements, rappel des donations antérieures, impact d'une valeur modifiée.", icon:"calc", color:"#C99A2E", soon:true },
+        { nm:"Testament minute", ds:"Modèle de testament olographe remis aux parties, à écrire de leur main ; envoi par mail.", icon:"plume", color:"#C99A2E", soon:true },
+      ]},
+      { name:"Régime matrimonial", icon:"calc", color:"#3B6BA5", cards:[
+        { nm:"Vérifier l'état liquidatif", ds:"Glissé de l'état liquidatif : une valeur modifiée, l'impact aussitôt.", icon:"calc", color:"#3B6BA5", soon:true },
+      ]},
+    ]
+  },
+  {
+    id:"affaires", name:"Affaires et international", color:"#E07A1F", icon:"affaires",
+    desc:"Sociétés, droit commercial, légalisation.",
+    sections:[
+      TRANSVERSES(),
+      { name:"Droit des sociétés", icon:"affaires", color:"#E07A1F", cards:[
+        { nm:"Décision des associés en séance", ds:"Agrément manquant ou signataire sans pouvoir : décision unanime (ou de l'associé unique) et pouvoir spécial.", icon:"clause", color:"#E07A1F", soon:true },
+      ]},
+      { name:"Droit commercial", icon:"bail", color:"#B5462F", cards:[
+        { nm:"Accord du bailleur manquant", ds:"Cession de fonds ou de bail : demande au bailleur prête à partir.", icon:"mail", color:"#B5462F", soon:true },
+      ]},
+      { name:"Légalisation", icon:"globe", color:"#3B6BA5", cards:[
+        { nm:"Formalité selon le pays", ds:"Pays de destination, type d'acte → légalisation ou apostille, et note d'honoraires.", icon:"tampon", color:"#3B6BA5", soon:true },
+      ]},
+    ]
+  },
+];
+
+/* ---------- rendu ---------- */
+function countCards(m){
+  let tot=0, live=0;
+  m.sections.forEach(s=>s.cards.forEach(c=>{tot++; if(!c.soon) live++;}));
+  return {tot,live};
+}
+function cardHTML(c){
+  const inner = `${svg(c.icon,'ic')}<div class="nm">${c.nm}</div><div class="ds">${c.ds}</div>`;
+  if(c.soon) return `<div class="card soon" style="--c:${c.color}"><span class="badge">À venir</span>${inner}</div>`;
+  const ext = /^https?:/.test(c.href) ? ' target="_blank" rel="noopener"' : '';
+  return `<a class="card live" style="--c:${c.color}" href="${c.href}"${ext}>${inner}<span class="go">Ouvrir &rarr;</span></a>`;
+}
+function sectionHTML(s){
+  const live = s.cards.filter(c=>!c.soon).length;
+  const cnt = live===s.cards.length ? '' : `<span class="cnt">${live}/${s.cards.length} disponible${live>1?'s':''}</span>`;
+  return `<h2 class="sec" style="--c:${s.color};--sc:${s.color}"><span class="sb-ic">${svg(s.icon)}</span>${s.name}${cnt}</h2>
+  <div class="grid">${s.cards.map(cardHTML).join('')}</div>`;
+}
+function build(){
+  const mg = document.getElementById('mgrid'), pg = document.getElementById('pages');
+  MATIERES.forEach(m=>{
+    const {tot,live} = countCards(m);
+    mg.insertAdjacentHTML('beforeend',
+      `<button class="mcard" style="--c:${m.color}" onclick="setView('${m.id}')"><div class="band"></div><div class="micon">${svg(m.icon)}</div>
+       <div class="body"><div class="mt">${m.name}</div><div class="md">${m.desc}</div><div class="mfoot">${tot} outils &middot; ${live} disponible${live>1?'s':''}</div></div></button>`);
+    pg.insertAdjacentHTML('beforeend',
+      `<div id="${m.id}" class="hidden">
+         <div class="crumb"><a onclick="setView('menu')">Accueil</a><span class="sep">&rsaquo;</span><span class="cur">${m.name}</span></div>
+         ${m.sections.map(sectionHTML).join('')}
+       </div>`);
+  });
+}
+function setView(v){
+  document.getElementById('menu').classList.toggle('hidden', v!=='menu');
+  MATIERES.forEach(m=>document.getElementById(m.id).classList.toggle('hidden', v!==m.id));
+  if(v==='menu') history.replaceState(null,'',location.pathname); else location.hash=v;
+  window.scrollTo(0,0);
+}
+build();
+const h = location.hash.replace('#','');
+setView(MATIERES.some(m=>m.id===h) ? h : 'menu');
 </script>
 </body>
 </html>
