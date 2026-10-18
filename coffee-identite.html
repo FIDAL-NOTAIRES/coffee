@@ -70,6 +70,22 @@
   .raw{margin-top:14px}
   .raw summary{font-size:12.5px;color:var(--ink-soft);cursor:pointer}
   .raw pre{font:12px/1.4 ui-monospace,Menlo,monospace;background:#FBFBF8;border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre-wrap;margin-top:6px}
+  .recev{margin-top:18px}
+  .recev[hidden]{display:none}
+  .recev .etat{display:flex;gap:12px;align-items:flex-start;border-radius:12px;padding:14px 16px;margin:10px 0 4px;border:1px solid var(--line)}
+  .recev .etat.ok{background:rgba(46,90,75,.08);border-color:rgba(46,90,75,.3)}
+  .recev .etat.ko{background:rgba(181,70,47,.07);border-color:rgba(181,70,47,.3)}
+  .recev .etat.warn{background:rgba(169,138,69,.10);border-color:rgba(169,138,69,.35)}
+  .recev .etat b{display:block;font-size:15px;margin-bottom:2px}
+  .recev .etat p{font-size:13.5px;color:var(--ink-soft)}
+  .recev .pastille{flex:none;width:12px;height:12px;border-radius:50%;margin-top:5px}
+  .recev .ok .pastille{background:var(--emerald)} .recev .ko .pastille{background:var(--urgent)} .recev .warn .pastille{background:var(--gold)}
+  .recev ol{margin:12px 0 0 20px;font-size:14px}
+  .recev ol li{margin-bottom:6px}
+  .recev ol li small{display:block;color:var(--ink-soft);font-size:12.5px}
+  .recev textarea{width:100%;font:inherit;font-size:14px;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-height:130px;margin-top:6px;resize:vertical}
+  .recev .regle{font-size:12px;color:var(--ink-soft);margin-top:12px}
+  .lien-aucune{display:inline-block;margin-top:12px;font-size:13px;color:var(--urgent);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;font-family:inherit}
   footer{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:28px}
 </style>
 </head>
@@ -103,6 +119,7 @@
         <button class="btn btn-main" id="lire" disabled>Lire la pièce</button>
         <button class="btn btn-sec" id="reset">Recommencer</button>
       </div>
+      <button type="button" class="lien-aucune" id="aucune">Le client n'a aucune pièce avec lui</button>
       <div class="prog" id="prog"></div>
       <div class="bar"><i id="bar"></i></div>
 
@@ -152,6 +169,23 @@
       <div class="status" id="status"></div>
       <div class="legend">Les deux premiers boutons ouvrent le menu de partage du téléphone avec les photos recadrées jointes et la fiche en texte : touchez Mail ou Messages selon le bouton choisi (une page web ne peut pas joindre des photos à un SMS autrement). Les boutons « fiche seule » partent directement, sans photo. Après envoi, la photo n'est conservée nulle part par cette page.</div>
     </div>
+  </div>
+
+  <div class="panel recev" id="recev" hidden>
+    <h2>Recevabilité de la pièce</h2>
+    <div class="hint">Calculée à partir de la fiche ; elle se met à jour si vous corrigez la nationalité, le type de pièce ou les dates.</div>
+    <div class="etat" id="recev-etat"><span class="pastille"></span><div><b id="recev-titre"></b><p id="recev-expl"></p></div></div>
+    <div id="recev-demande" hidden>
+      <ol id="recev-liste"></ol>
+      <label class="fld" for="recev-msg">Message au client <small>— modifiable avant envoi</small></label>
+      <textarea id="recev-msg"></textarea>
+      <div class="actions">
+        <a class="btn btn-main" id="recev-mail" href="#" target="_top">Envoyer par mail</a>
+        <a class="btn btn-main" id="recev-sms" href="#" target="_top">Envoyer par SMS</a>
+        <button class="btn btn-sec" id="recev-copier">Copier le message</button>
+      </div>
+    </div>
+    <div class="regle" id="recev-regle"></div>
   </div>
 
   <footer>COFFEE · FIDAL Notaires — Paris · gamme FIDAL Apps</footer>
@@ -562,12 +596,139 @@ function afficher(L){
 }
 
 function verifierExpiration(){
-  const e = ficheActuelle().expiration;
-  const m = e && e.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  if(!m) return;
-  const d = new Date(+m[3], +m[2]-1, +m[1]);
-  if(d < new Date()) $('verdict').innerHTML += '<span class="flag ko">pièce périmée</span>';
+  const R = recevabilite(ficheActuelle(), false);
+  if(R.etat === 'ko') $('verdict').innerHTML += '<span class="flag ko">pièce non recevable</span>';
+  else if(R.prolongee) $('verdict').innerHTML += '<span class="flag warn">validité prolongée de 5 ans</span>';
+  afficherRecevabilite();
 }
+
+/* ---------- recevabilité de la pièce (arbitrages JFD du 17/10/2026) ----------
+   1. Comparant étranger : SEUL le passeport en cours de validité est accepté.
+   2. Pièce française : CNI délivrée à un majeur entre 2004 et 2013 = prolongation
+      automatique de 5 ans au-delà de la date imprimée ; au-delà, autre pièce exigée.
+      Passeport périmé : aucune prolongation.
+   3. Aucune pièce en séance : copie de deux pièces envoyée depuis le téléphone,
+      dont au moins une CNI ou un passeport en cours de validité, la seconde libre
+      avec photographie.                                                          */
+let aucunePiece = false;
+function jjmmaaaa(s){ const m = s && s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2]-1, +m[1]) : null; }
+function ajouterAns(d, n){ const r = new Date(d); r.setFullYear(r.getFullYear() + n); return r; }
+function fr(d){ return d.toLocaleDateString('fr-FR'); }
+function ageA(naiss, d){ if(!naiss) return null; let a = d.getFullYear() - naiss.getFullYear(); const m = d.getMonth() - naiss.getMonth(); if(m < 0 || (m === 0 && d.getDate() < naiss.getDate())) a--; return a; }
+
+function finDeValidite(f){
+  // Renvoie {fin, prolongee, inconnue}
+  const naiss = jjmmaaaa(f.naissance);
+  const passeport = /passeport/i.test(f.type);
+  const ancienne = /ancien format/i.test(f.type);
+  const imprimee = jjmmaaaa(f.expiration);
+  if(passeport) return imprimee ? {fin: imprimee, prolongee: false} : {inconnue: true};
+  if(ancienne && !imprimee){
+    // Ancienne CNI : les 4 premiers chiffres du numéro donnent l'année et le mois de délivrance.
+    const m = (f.numero || '').match(/^(\d{2})(\d{2})/);
+    if(!m || +m[2] < 1 || +m[2] > 12) return {inconnue: true};
+    const deliv = new Date(2000 + +m[1], +m[2] - 1, 1);
+    const majeur = (ageA(naiss, deliv) ?? 18) >= 18;
+    const quinze = majeur && deliv.getFullYear() >= 2004;
+    const fin = ajouterAns(deliv, quinze ? 15 : 10);
+    return {fin, prolongee: quinze && deliv.getFullYear() <= 2013, delivrance: deliv};
+  }
+  if(!imprimee) return {inconnue: true};
+  // CNI dont la date imprimée correspond à une délivrance 2004-2013 (validité imprimée de 10 ans)
+  if(/identit/i.test(f.type) && !/2021/.test(f.type)){
+    const deliv = ajouterAns(imprimee, -10);
+    const majeur = (ageA(naiss, deliv) ?? 18) >= 18;
+    if(majeur && deliv >= new Date(2004, 0, 2) && deliv <= new Date(2013, 11, 31))
+      return {fin: ajouterAns(imprimee, 5), prolongee: true, imprimee};
+  }
+  return {fin: imprimee, prolongee: false};
+}
+
+function recevabilite(f, aucune){
+  const auj = new Date(); auj.setHours(0,0,0,0);
+  const etranger = f.nationalite && !/fran/i.test(f.nationalite);
+  const passeport = /passeport/i.test(f.type);
+  if(aucune) return {
+    etat: 'ko', cas: 'aucune',
+    titre: 'Aucune pièce présentée',
+    expl: etranger ? 'Comparant étranger : seul son passeport en cours de validité est accepté. Il l\'envoie en photographie depuis son téléphone.'
+                   : 'Le comparant envoie depuis son téléphone la copie de deux pièces d\'identité, dont au moins une carte nationale d\'identité ou un passeport en cours de validité.',
+    demande: etranger ? ['passeport'] : ['principale', 'seconde']
+  };
+  if(!f.type && !f.expiration) return null;
+  if(etranger){
+    if(!passeport) return {etat:'ko', cas:'etranger', titre:'Pièce non recevable : comparant étranger', expl:'Pour un comparant étranger, seul le passeport fait foi. Aucune autre pièce (titre de séjour, carte consulaire, carte d\'identité étrangère) n\'est acceptée.', demande:['passeport']};
+    const v = finDeValidite(f);
+    if(v.inconnue) return {etat:'warn', cas:'etranger', titre:'Passeport : date d\'expiration à saisir', expl:'Saisissez la date d\'expiration dans la fiche pour vérifier la validité.'};
+    if(v.fin < auj) return {etat:'ko', cas:'etranger', titre:'Passeport périmé depuis le ' + fr(v.fin), expl:'Pour un comparant étranger, seul un passeport en cours de validité est accepté.', demande:['passeport']};
+    return {etat:'ok', titre:'Passeport en cours de validité', expl:'Valable jusqu\'au ' + fr(v.fin) + '.'};
+  }
+  const v = finDeValidite(f);
+  if(v.inconnue) return {etat:'warn', titre:'Validité à vérifier', expl: /ancien format/i.test(f.type) ? 'Ancienne carte : la date de délivrance n\'a pas pu être lue dans le numéro. Saisissez la date d\'expiration imprimée au verso.' : 'Saisissez la date d\'expiration dans la fiche.'};
+  if(v.fin >= auj){
+    if(v.prolongee) return {etat:'ok', prolongee:true, titre:'Carte recevable : validité prolongée jusqu\'au ' + fr(v.fin),
+      expl:'Carte délivrée à un majeur entre 2004 et 2013 : sa validité est automatiquement prolongée de 5 ans au-delà de la date imprimée' + (v.imprimee ? ' (' + fr(v.imprimee) + ')' : '') + '.'};
+    return {etat:'ok', titre:'Pièce en cours de validité', expl:'Valable jusqu\'au ' + fr(v.fin) + '.'};
+  }
+  return {etat:'ko', cas:'perimee',
+    titre: (passeport ? 'Passeport périmé' : 'Carte périmée') + ' depuis le ' + fr(v.fin) + (v.prolongee ? ' (prolongation de 5 ans comprise)' : ''),
+    expl: passeport ? 'Un passeport périmé ne bénéficie d\'aucune prolongation : une autre pièce en cours de validité est exigée.'
+                    : 'La prolongation éventuelle est épuisée : une autre pièce en cours de validité est exigée.',
+    demande:['principale']};
+}
+
+const PIECES = {
+  passeport: ['Passeport en cours de validité', 'Photographie de la page portant la photographie et la bande de lecture.'],
+  principale: ['Carte nationale d\'identité ou passeport en cours de validité', 'Recto et verso pour la carte ; page photographie pour le passeport.'],
+  seconde: ['Une seconde pièce officielle avec photographie, au choix', 'Permis de conduire, carte du combattant, carte d\'invalidité, carte professionnelle délivrée par une administration…']
+};
+
+function messageClient(R, f){
+  const lignes = R.demande.map(k => '– ' + PIECES[k][0].toLowerCase());
+  const civ = f.sexe === 'Féminin' ? 'Madame ' : f.sexe === 'Masculin' ? 'Monsieur ' : '';
+  return 'Bonjour' + (f.nom ? ' ' + civ + capitaliser(f.nom) : '') + ',\n\n'
+    + 'Pour la signature en cours' + (f.dossier ? ' (' + f.dossier + ')' : '') + ', merci de nous adresser dès à présent, en réponse à ce message, la photographie '
+    + (R.demande.length > 1 ? 'des pièces suivantes' : 'de la pièce suivante') + ' :\n' + lignes.join('\n') + '\n\n'
+    + 'Les photographies doivent être nettes et entières.\n\nMerci,\nFIDAL Notaires';
+}
+
+function afficherRecevabilite(){
+  const f = ficheActuelle();
+  const R = recevabilite(f, aucunePiece);
+  const box = $('recev');
+  if(!R){ box.hidden = true; return; }
+  box.hidden = false;
+  $('recev-etat').className = 'etat ' + R.etat;
+  $('recev-titre').textContent = R.titre;
+  $('recev-expl').textContent = R.expl;
+  const dem = R.demande && R.demande.length;
+  $('recev-demande').hidden = !dem;
+  if(dem){
+    $('recev-liste').innerHTML = R.demande.map(k => '<li>' + PIECES[k][0] + '<small>' + PIECES[k][1] + '</small></li>').join('');
+    if(!$('recev-msg').dataset.touche) $('recev-msg').value = messageClient(R, f);
+    majLiensClient();
+  }
+  $('recev-regle').textContent = 'Règles de l\'étude : comparant étranger, passeport seul ; carte délivrée à un majeur entre 2004 et 2013, validité prolongée de 5 ans ; aucune pièce, deux copies dont une carte d\'identité ou un passeport en cours de validité.';
+}
+function majLiensClient(){
+  const f = ficheActuelle(), t = $('recev-msg').value;
+  const sujet = (f.dossier ? f.dossier + ' – ' : '') + 'Pièce d\'identité à nous adresser';
+  $('recev-mail').href = 'mailto:' + encodeURIComponent(f.email || '') + '?subject=' + encodeURIComponent(sujet) + '&body=' + encodeURIComponent(t);
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  $('recev-sms').href = 'sms:' + (f.portable || '').replace(/\s/g,'') + (ios ? '&' : '?') + 'body=' + encodeURIComponent(t);
+}
+$('recev-msg').addEventListener('input', () => { $('recev-msg').dataset.touche = '1'; majLiensClient(); });
+$('recev-copier').addEventListener('click', async () => {
+  try{ await navigator.clipboard.writeText($('recev-msg').value); $('status').textContent = 'Message copié.'; }
+  catch(e){ $('status').textContent = 'Copie impossible : sélectionnez le texte à la main.'; }
+});
+$('aucune').addEventListener('click', () => {
+  aucunePiece = !aucunePiece;
+  $('aucune').textContent = aucunePiece ? 'Revenir à la lecture d\'une pièce' : 'Le client n\'a aucune pièce avec lui';
+  delete $('recev-msg').dataset.touche;
+  afficherRecevabilite();
+  if(aucunePiece) $('recev').scrollIntoView({behavior:'smooth', block:'start'});
+});
 
 function ficheActuelle(){
   const f = {};
@@ -585,6 +746,8 @@ function texteFiche(){
   lignes.push('Lecture locale le ' + new Date().toLocaleDateString('fr-FR') + (lecture && lecture.mrzOk === true ? ' — bande de lecture vérifiée.' : lecture && lecture.mrzOk === false ? ' — bande lue, contrôle en défaut.' : ' — bande non reconnue, saisie manuelle.'));
   lignes.push('');
   for(const k of Object.keys(lib)) if(f[k]) lignes.push(lib[k] + ' : ' + f[k]);
+  const R = recevabilite(f, aucunePiece);
+  if(R){ lignes.push(''); lignes.push('Recevabilité : ' + R.titre + '. ' + R.expl); }
   lignes.push('');
   lignes.push('Comparution suggérée :');
   lignes.push(comparution(f));
@@ -716,7 +879,7 @@ async function partagerAvecPhotos(canal){
 $('partager-mail').addEventListener('click', () => partagerAvecPhotos('Mail'));
 $('partager-sms').addEventListener('click', () => partagerAvecPhotos('Messages'));
 
-document.querySelectorAll('#fiche input, #portable, #email, #dossier').forEach(inp => inp.addEventListener('input', rafraichirLiens));
+document.querySelectorAll('#fiche input, #portable, #email, #dossier').forEach(inp => inp.addEventListener('input', () => { rafraichirLiens(); afficherRecevabilite(); }));
 document.querySelector('#fiche input[data-k="lieu"]').addEventListener('change', chercherCpNaissance);
 rafraichirLiens();
 </script>
