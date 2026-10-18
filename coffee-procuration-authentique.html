@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2238">
+<title>COFFEE · Procuration authentique</title>
+<link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Filigrane posé dans le navigateur : le projet d'acte ne quitte pas l'appareil avant l'envoi. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--card:#FFFFFF;--line:#DEDCD3;--emerald:#2E5A4B;--emerald-d:#244A3D;--urgent:#B5462F;--gold:#A98A45;--violet:#7A6BA5;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:22px}
+  .back{display:table;font-size:13px;color:var(--ink-soft);text-decoration:none;margin-bottom:12px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:10px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--violet);box-shadow:0 0 0 4px rgba(122,107,165,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-.01em;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:14.5px;margin-top:4px;max-width:70ch}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:4px}
+  .hint{color:var(--ink-soft);font-size:13px;margin-bottom:12px}
+  label.fld{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+  label.fld small{font-weight:400;text-transform:none;letter-spacing:0}
+  input[type=text],input[type=email],input[type=date],textarea{width:100%;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+  input.ko{border-color:var(--urgent)}
+  textarea{min-height:270px;resize:vertical;font-size:14px}
+  .drop{border:1.5px dashed var(--line);border-radius:12px;padding:16px;background:#FBFBF8;cursor:pointer;display:block;text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:4px}
+  .drop b{display:block;color:var(--ink);font-size:14.5px;margin-bottom:2px}
+  .drop.on{border-color:var(--emerald);background:rgba(46,90,75,.06)}
+  .drop.has{border-style:solid;border-color:rgba(46,90,75,.4);text-align:left}
+  .drop.has b{color:var(--emerald-d)}
+  .drop input{display:none}
+  .drop .err{color:var(--urgent)}
+  .chk{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;cursor:pointer;font-size:14px}
+  .chk.on{border-color:var(--emerald);background:rgba(46,90,75,.05)}
+  .chk.off{opacity:.45;pointer-events:none}
+  .chk small{display:block;color:var(--ink-soft);font-size:12.5px}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:150px;text-align:center;text-decoration:none;display:inline-block}
+  .btn-main{background:var(--emerald);color:#fff}
+  .btn-main:hover{background:var(--emerald-d)}
+  .btn-main:disabled,.btn-main[aria-disabled="true"]{background:#B9BDB7;cursor:not-allowed;pointer-events:none}
+  .btn-sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn-sec[aria-disabled="true"]{opacity:.45;pointer-events:none}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .recap{font-size:13px;color:var(--ink-soft);margin-top:10px}
+  .recap b{color:var(--ink)}
+  .warn{color:var(--urgent)}
+  .status{font-size:12.5px;color:var(--emerald-d);margin-top:8px;min-height:16px}
+  .legend{font-size:12px;color:var(--ink-soft);margin-top:10px}
+  footer{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:28px}
+  :focus-visible{outline:2px solid var(--emerald);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="./index.html">&larr; COFFEE · Réflexes en séance</a>
+    <div class="eyebrow">Imprévu en séance · Comparant absent</div>
+    <div class="wordmark">Procuration authentique</div>
+    <div class="sub">Un comparant ne peut pas venir et l'acte exige une procuration en la forme authentique : on l'adresse au confrère qui la recevra, avec le projet d'acte filigrané.</div>
+  </header>
+
+  <div class="grid">
+    <!-- PIÈCES ET DESTINATAIRES -->
+    <div class="panel">
+      <h2>Pièces à joindre</h2>
+      <div class="hint">Les deux pièces partent obligatoirement ensemble.</div>
+
+      <label class="fld">Projet d'acte <small>— PDF ; le filigrane « PROJET » est posé en diagonale sur chaque page</small></label>
+      <label class="drop" id="drop-projet">
+        <input type="file" accept="application/pdf,.pdf" id="f-projet">
+        <span class="lbl"><b>Glisser le projet d'acte</b>ou appuyer pour choisir le fichier</span>
+      </label>
+
+      <label class="fld">Procuration authentique <small>— Word, jointe telle quelle pour que le confrère la reprenne dans son logiciel</small></label>
+      <label class="drop" id="drop-proc">
+        <input type="file" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword" id="f-proc">
+        <span class="lbl"><b>Glisser la procuration en Word</b>ou appuyer pour choisir le fichier</span>
+      </label>
+      <div class="legend">La procuration sera bientôt générée ici à partir des cadres de l'étude ; en attendant, joindre le Word préparé.</div>
+
+      <h2 style="margin-top:22px">Dossier et confrère</h2>
+      <label class="fld" for="dossier">Intitulé du dossier <small>— repris en objet</small></label>
+      <input type="text" id="dossier" list="dossiers-connus" placeholder="Vente DUPONT / MARTIN" autocomplete="off">
+      <datalist id="dossiers-connus"></datalist>
+
+      <label class="fld" for="absent">Comparant absent</label>
+      <input type="text" id="absent" placeholder="Monsieur Jean DUPONT" autocomplete="off">
+
+      <label class="fld" for="date-sig">Date prévue de la signature</label>
+      <input type="date" id="date-sig">
+
+      <label class="fld" for="confrere">Mail du confrère</label>
+      <input type="email" id="confrere" placeholder="prenom.nom@notaires.fr" autocomplete="off" inputmode="email">
+
+      <label class="fld" for="collab">Mail du collaborateur du confrère <small>— facultatif</small></label>
+      <input type="email" id="collab" placeholder="collaborateur@notaires.fr" autocomplete="off" inputmode="email">
+
+      <label class="chk on"><input type="radio" name="dest" value="confrere" checked><span>Mail du confrère</span></label>
+      <label class="chk"><input type="radio" name="dest" value="confrere_collab"><span>Mail du confrère + collaborateur<small>Le collaborateur est ajouté en destinataire direct.</small></span></label>
+      <label class="chk"><input type="radio" name="dest" value="libre"><span>Destinataire libre<small>Le destinataire se saisit dans le mail une fois ouvert.</small></span></label>
+    </div>
+
+    <!-- MAIL -->
+    <div class="panel">
+      <h2>Mail au confrère</h2>
+      <div class="hint">Texte prérempli, modifiable avant envoi. Il part avec la signature habituelle de votre messagerie.</div>
+      <label class="fld" for="objet">Objet</label>
+      <input type="text" id="objet">
+      <label class="fld" for="corps">Message</label>
+      <textarea id="corps"></textarea>
+      <div class="recap" id="recap"></div>
+
+      <div class="actions">
+        <button class="btn btn-main" id="partager" disabled>Envoyer avec les pièces jointes</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn btn-sec" id="telecharger" disabled>Télécharger les deux pièces</button>
+        <a class="btn btn-sec" id="mail" href="#" target="_top">Ouvrir le mail sans pièce</a>
+      </div>
+      <div class="status" id="status"></div>
+      <div class="legend">« Envoyer avec les pièces jointes » ouvre le menu de partage de l'appareil, pièces jointes et texte compris : choisissez Mail ou Outlook, puis vérifiez le destinataire. Si l'appareil refuse, téléchargez les deux pièces et joignez-les au mail ouvert par le dernier bouton. Une page web ne peut pas joindre de fichier à un mail par un lien direct.</div>
+    </div>
+  </div>
+
+  <footer>COFFEE · FIDAL Notaires — Paris · gamme FIDAL Apps</footer>
+</div>
+
+<script>
+/* ======================================================================
+   COFFEE — Procuration authentique : mail au confrère
+   Arbitrages JFD (16-17/10/2026) : le mail joint OBLIGATOIREMENT le projet
+   d'acte en PDF avec un filigrane en diagonale « PROJET » et la procuration
+   authentique en Word ; retour demandé en copie authentique scannée ou
+   numérique, sans attendre l'original papier.
+   Destinataires : mêmes choix que la carte « Virement non reçu » ; les
+   dossiers et adresses déjà saisis dans cette carte sont proposés ici.
+   ====================================================================== */
+const $ = id => document.getElementById(id);
+const K_DOSSIERS = "coffee.virement.dossiers";   // partagé avec la carte Virement non reçu
+let projet = null;      // {nom, octets (Uint8Array filigrané), pages}
+let procuration = null; // File
+
+function lire(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+function ecrire(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+const nettoie = s => (s || "").trim().replace(/\s+/g, "");
+const emailOk = s => !s.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+const nomFichier = s => (s || "").replace(/[\\/:*?"<>|]+/g, "-").trim();
+
+/* ---------- filigrane « PROJET » ---------- */
+async function filigraner(file){
+  const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
+  const doc = await PDFDocument.load(await file.arrayBuffer(), { ignoreEncryption: true });
+  const police = await doc.embedFont(StandardFonts.HelveticaBold);
+  const texte = "PROJET";
+  for(const page of doc.getPages()){
+    const { width: w, height: h } = page.getSize();
+    const angle = Math.atan2(h, w);
+    const diag = Math.hypot(w, h);
+    const taille = diag * 0.6 / police.widthOfTextAtSize(texte, 1);
+    const tw = police.widthOfTextAtSize(texte, taille);
+    const th = police.heightAtSize(taille, { descender: false });
+    // centre le texte sur la page, le long de la diagonale bas-gauche → haut-droite
+    const x = w / 2 - (tw / 2) * Math.cos(angle) + (th / 2) * Math.sin(angle);
+    const y = h / 2 - (tw / 2) * Math.sin(angle) - (th / 2) * Math.cos(angle);
+    page.drawText(texte, { x, y, size: taille, font: police, color: rgb(0.55, 0.55, 0.55), opacity: 0.22, rotate: degrees(angle * 180 / Math.PI) });
+  }
+  return { octets: await doc.save(), pages: doc.getPageCount() };
+}
+
+async function prendreProjet(file){
+  const box = $("drop-projet");
+  if(!/\.pdf$/i.test(file.name) && file.type !== "application/pdf"){
+    box.querySelector(".lbl").innerHTML = '<b>Glisser le projet d\'acte</b><span class="err">Ce fichier n\'est pas un PDF : enregistrez le projet en PDF depuis Word, puis recommencez.</span>';
+    return;
+  }
+  box.querySelector(".lbl").innerHTML = "<b>" + file.name + "</b>Pose du filigrane…";
+  try{
+    const r = await filigraner(file);
+    projet = { nom: file.name, octets: r.octets, pages: r.pages };
+    box.classList.add("has");
+    box.querySelector(".lbl").innerHTML = "<b>" + file.name + "</b>Filigrane « PROJET » posé sur " + r.pages + " page" + (r.pages > 1 ? "s" : "") + " · <u>remplacer</u>";
+  }catch(e){
+    console.warn(e); projet = null; box.classList.remove("has");
+    box.querySelector(".lbl").innerHTML = '<b>' + file.name + '</b><span class="err">PDF illisible ou protégé : enregistrez-le de nouveau en PDF sans mot de passe.</span>';
+  }
+  rendre();
+}
+function prendreProcuration(file){
+  const box = $("drop-proc");
+  if(!/\.docx?$/i.test(file.name)){
+    box.querySelector(".lbl").innerHTML = '<b>Glisser la procuration en Word</b><span class="err">La procuration doit être en Word (.docx ou .doc), pour que le confrère la reprenne dans son logiciel.</span>';
+    return;
+  }
+  procuration = file;
+  box.classList.add("has");
+  box.querySelector(".lbl").innerHTML = "<b>" + file.name + "</b>Jointe telle quelle · <u>remplacer</u>";
+  rendre();
+}
+[["drop-projet", "f-projet", prendreProjet], ["drop-proc", "f-proc", prendreProcuration]].forEach(([b, i, fn]) => {
+  const box = $(b), inp = $(i);
+  inp.addEventListener("change", () => inp.files[0] && fn(inp.files[0]));
+  ["dragenter", "dragover"].forEach(ev => box.addEventListener(ev, e => { e.preventDefault(); box.classList.add("on"); }));
+  ["dragleave", "drop"].forEach(ev => box.addEventListener(ev, e => { e.preventDefault(); box.classList.remove("on"); }));
+  box.addEventListener("drop", e => { const f = e.dataTransfer.files[0]; if(f) fn(f); });
+});
+
+/* ---------- mail ---------- */
+function dateLongue(v){
+  if(!v) return "";
+  const [a, m, j] = v.split("-").map(Number);
+  return new Date(a, m - 1, j).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+function corpsParDefaut(){
+  const absent = $("absent").value.trim() || "[comparant absent]";
+  const d = dateLongue($("date-sig").value);
+  return [
+    "Mon cher confrère,",
+    "",
+    "Dans le cadre du dossier visé en objet, la signature de l'acte est prévue " + (d ? "le " + d : "très prochainement") + ". " + absent + " ne pourra pas y assister et doit y être " + (/^(madame|mme)\b/i.test(absent) ? "représentée" : "représenté") + " en vertu d'une procuration en la forme authentique.",
+    "",
+    "Vous trouverez ci-joint :",
+    "– le projet d'acte, pour information ;",
+    "– le projet de procuration au format Word, que je vous remercie de bien vouloir recevoir en la forme authentique.",
+    "",
+    "Je vous saurais gré de m'en adresser, dès sa signature, une copie authentique scannée ou une copie authentique numérique, sans attendre l'envoi de l'original.",
+    "",
+    "Je vous prie de me croire,",
+    "Votre bien dévoué confrère,"
+  ].join("\n");
+}
+function etat(){
+  const dossier = $("dossier").value.trim();
+  const confrere = nettoie($("confrere").value), collab = nettoie($("collab").value);
+  const mode = document.querySelector('input[name="dest"]:checked').value;
+  let to = [];
+  if(mode === "confrere") to = [confrere];
+  else if(mode === "confrere_collab") to = [confrere, collab];
+  to = to.filter(Boolean);
+  return { dossier, confrere, collab, mode, to, subject: $("objet").value.trim(), body: $("corps").value };
+}
+function rendre(){
+  const ob = $("objet");
+  if(!ob.dataset.touche) ob.value = ($("dossier").value.trim() || "[intitulé du dossier]") + " – procuration authentique";
+  const co = $("corps");
+  if(!co.dataset.touche) co.value = corpsParDefaut();
+  const e = etat();
+  const optCollab = document.querySelector('input[value="confrere_collab"]').closest(".chk");
+  optCollab.classList.toggle("off", !e.collab);
+  if(!e.collab && e.mode === "confrere_collab"){ document.querySelector('input[value="confrere"]').checked = true; return rendre(); }
+  document.querySelectorAll(".chk").forEach(c => c.classList.toggle("on", c.querySelector("input").checked));
+  ["confrere", "collab"].forEach(id => $(id).classList.toggle("ko", !emailOk($(id).value)));
+  const manque = [];
+  if(!projet) manque.push("le projet d'acte en PDF");
+  if(!procuration) manque.push("la procuration en Word");
+  const dest = e.mode === "libre" ? "à saisir dans le mail" : (e.to.length ? e.to.join(", ") : '<span class="warn">adresse du confrère manquante</span>');
+  $("recap").innerHTML = "<b>Destinataire :</b> " + dest + "<br><b>Pièces :</b> " + (manque.length ? '<span class="warn">manque ' + manque.join(" et ") + "</span>" : "projet filigrané et procuration Word prêts");
+  const pret = !manque.length;
+  $("partager").disabled = !pret;
+  $("telecharger").disabled = !pret;
+  $("mail").href = lienMail(e);
+}
+function lienMail(e){
+  const q = ["subject=" + encodeURIComponent(e.subject), "body=" + encodeURIComponent(e.body)];
+  return "mailto:" + e.to.join(",") + "?" + q.join("&");
+}
+function pieces(){
+  const base = nomFichier($("dossier").value) || "Dossier";
+  const pdf = new File([projet.octets], base + " - Projet d'acte (PROJET).pdf", { type: "application/pdf" });
+  const doc = new File([procuration], procuration.name, { type: procuration.type || "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+  return [pdf, doc];
+}
+function memoriser(){
+  const e = etat(); if(!e.dossier) return;
+  const d = lire(K_DOSSIERS, {});
+  d[e.dossier] = Object.assign({}, d[e.dossier], { confrere: e.confrere || (d[e.dossier] || {}).confrere, collab: e.collab || (d[e.dossier] || {}).collab, quand: Date.now() });
+  ecrire(K_DOSSIERS, d);
+}
+
+$("partager").addEventListener("click", async () => {
+  const e = etat(), f = pieces();
+  memoriser();
+  const texte = (e.to.length ? "À : " + e.to.join(", ") + "\n" : "") + "Objet : " + e.subject + "\n\n" + e.body;
+  if(!navigator.share || (navigator.canShare && !navigator.canShare({ files: f }))){
+    $("status").textContent = "Cet appareil ne sait pas joindre les pièces par le menu de partage : téléchargez-les, puis ouvrez le mail sans pièce et joignez-les.";
+    return;
+  }
+  try{
+    await navigator.share({ files: f, title: e.subject, text: texte });
+    $("status").textContent = "Pièces transmises au menu de partage : choisissez votre messagerie et vérifiez le destinataire et l'objet.";
+  }catch(err){
+    if(err.name === "AbortError"){ $("status").textContent = "Envoi annulé."; return; }
+    try{ await navigator.share({ files: f, title: e.subject }); await navigator.clipboard.writeText(texte); $("status").textContent = "Pièces transmises ; le texte du mail est copié, collez-le dans le message."; }
+    catch(e2){ $("status").textContent = "L'appareil a refusé le partage : téléchargez les pièces et ouvrez le mail sans pièce."; }
+  }
+});
+$("telecharger").addEventListener("click", () => {
+  memoriser();
+  pieces().forEach((f, i) => setTimeout(() => {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  }, i * 400));
+  $("status").textContent = "Deux pièces téléchargées : joignez-les au mail ouvert par « Ouvrir le mail sans pièce ».";
+});
+$("mail").addEventListener("click", memoriser);
+
+/* ---------- saisie ---------- */
+function remplirDossiers(){
+  const d = lire(K_DOSSIERS, {});
+  $("dossiers-connus").innerHTML = Object.keys(d).sort((a, b) => (d[b].quand || 0) - (d[a].quand || 0))
+    .map(n => '<option value="' + n.replace(/"/g, "&quot;") + '">').join("");
+}
+$("dossier").addEventListener("change", () => {
+  const v = lire(K_DOSSIERS, {})[$("dossier").value.trim()];
+  if(v){ if(v.confrere && !$("confrere").value) $("confrere").value = v.confrere; if(v.collab && !$("collab").value) $("collab").value = v.collab; }
+  rendre();
+});
+["dossier", "absent", "date-sig", "confrere", "collab"].forEach(id => $(id).addEventListener("input", rendre));
+document.querySelectorAll('input[name="dest"]').forEach(r => r.addEventListener("change", rendre));
+$("objet").addEventListener("input", () => { $("objet").dataset.touche = "1"; rendre(); });
+$("corps").addEventListener("input", () => { $("corps").dataset.touche = "1"; rendre(); });
+if(typeof PDFLib === "undefined") $("status").innerHTML = '<span class="warn">Bibliothèque de filigrane non chargée : vérifiez la connexion puis rechargez la page.</span>';
+remplirDossiers();
+rendre();
+</script>
+</body>
+</html>
