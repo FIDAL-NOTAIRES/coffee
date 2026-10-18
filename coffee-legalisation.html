@@ -58,7 +58,15 @@
   .chk-proc input{width:auto;margin-top:4px}
   .chk-proc small{display:block;color:var(--ink-soft);font-size:12.5px}
   .source a{color:var(--emerald-d)}
-  .ajout{font:inherit;font-size:13.5px;color:var(--emerald-d);background:none;border:0;cursor:pointer;margin-top:10px;text-decoration:underline}
+  .ajout{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;font:inherit;font-weight:600;font-size:14.5px;color:var(--emerald-d);background:rgba(46,90,75,.07);border:1.5px dashed var(--emerald);border-radius:12px;padding:12px 16px;margin-top:12px;cursor:pointer}
+  .ajout:hover{background:rgba(46,90,75,.13)}
+  .ajout .plus{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--emerald);color:#fff;font-size:17px;line-height:1}
+  /* champs obligatoires : teinte tant qu'ils sont vides */
+  .oblig label.fld::after,label.fld.oblig::after{content:" *";color:var(--urgent)}
+  input.oblig:placeholder-shown{border-color:rgba(181,70,47,.55);background:rgba(181,70,47,.05)}
+  input.oblig:placeholder-shown:focus{border-color:var(--urgent)}
+  .doc .d-form:disabled{opacity:1;color:var(--ink);background:#F1F4F2;cursor:not-allowed}
+  .doc .forcer{font:inherit;font-size:12px;color:var(--emerald-d);background:none;border:0;padding:0;margin-left:4px;text-decoration:underline;cursor:pointer}
   .totaux{margin-top:16px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
   .totaux div{display:flex;justify-content:space-between;padding:3px 0}
   .totaux .ttc{font-weight:600;font-size:15.5px;border-top:1px solid var(--line);margin-top:4px;padding-top:7px}
@@ -93,7 +101,7 @@
         <div class="trio">
           <div><label class="fld" for="civ">Civilité</label>
             <select id="civ"><option value="Madame">Madame</option><option value="Monsieur">Monsieur</option><option value="">Société</option></select></div>
-          <div><label class="fld" for="nom">Nom ou raison sociale</label><input type="text" id="nom" autocomplete="off"></div>
+          <div><label class="fld oblig" for="nom">Nom ou raison sociale</label><input type="text" id="nom" class="oblig" placeholder="Obligatoire" autocomplete="off"></div>
           <div><label class="fld" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off"></div>
         </div>
         <label class="fld" for="adresse">Adresse</label>
@@ -106,9 +114,9 @@
 
       <div class="panel">
         <h2>La demande</h2>
-        <label class="fld" for="pays">Pays de destination</label>
+        <label class="fld oblig" for="pays">Pays de destination</label>
         <div class="ac">
-          <input type="text" id="pays" placeholder="Tapez les premières lettres : Esp, Mar, Éta…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="pays-sugg" aria-autocomplete="list">
+          <input type="text" id="pays" class="oblig" placeholder="Tapez les premières lettres : Esp, Mar, Éta…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="pays-sugg" aria-autocomplete="list">
           <ul class="ac-liste" id="pays-sugg" role="listbox" hidden></ul>
         </div>
         <div class="source" id="source">Chargement du tableau du ministère…</div>
@@ -123,10 +131,10 @@
     <div>
       <div class="panel">
         <h2>Documents et formalités</h2>
-        <div class="hint">Une ligne par nature de document. La formalité se déduit du pays et du type d'acte, d'après le tableau du ministère ; elle reste modifiable.</div>
+        <div class="hint">Une ligne par nature de document. La formalité se déduit du pays et du type d'acte, d'après le tableau du ministère. Elle est verrouillée quand le tableau est catégorique, libre quand il renvoie à la nature du document.</div>
         <div id="docs"></div>
         <datalist id="natures"></datalist>
-        <button type="button" class="ajout" id="ajout">Ajouter un document</button>
+        <button type="button" class="ajout" id="ajout"><span class="plus" aria-hidden="true">+</span>Ajouter un document</button>
 
         <div class="totaux" id="decompte"></div>
         <div class="recap" id="recap"></div>
@@ -197,12 +205,12 @@ function formalitePour(nomPays, type){
   const P = paysDuTableau(nomPays);
   if(!P) return nomPays ? { valeur: "", detail: "Pays absent du tableau du ministère : formalité à déterminer." } : null;
   const [nom, f] = P;
-  if(f.special) return { valeur: "legalisation", detail: f.special + "." };
+  if(f.special) return { valeur: "legalisation", detail: f.special + ".", verrou: true };
   if(!type) return { valeur: "", detail: "Choisissez le type d'acte pour connaître la formalité." };
   const code = f.codes[["I","II","III","IV","V","VI","VII","VIII","IX"].indexOf(type)];
-  if(code === "A") return { valeur: "apostille", detail: nom + " : apostille." };
-  if(code === "L") return { valeur: "legalisation", detail: nom + " : légalisation." };
-  if(code[0] === "D") return { valeur: "aucune", detail: nom + " : dispense de légalisation (" + (TABLEAU.dispenses[code[1]] || "convention") + ")." };
+  if(code === "A") return { valeur: "apostille", detail: nom + " : apostille.", verrou: true };
+  if(code === "L") return { valeur: "legalisation", detail: nom + " : légalisation.", verrou: true };
+  if(code[0] === "D") return { valeur: "aucune", detail: nom + " : dispense de légalisation (" + (TABLEAU.dispenses[code[1]] || "convention") + ").", verrou: true };
   const n = code.replace(/[()]/g, ""), R = TABLEAU.renvois[n];
   return { valeur: R && R.defaut === "A" ? "apostille" : "", detail: nom + ", renvoi (" + n + ") : " + (R ? R.texte : "voir le tableau du ministère.") + (R && R.defaut === "A" ? " Apostille proposée par défaut." : ""), renvoi: true };
 }
@@ -275,7 +283,8 @@ document.addEventListener("click", e => { if(!e.target.closest(".ac")) fermerSug
 
 /* ---------- procuration authentique (émoluments calculés par COUNTDOWN) ---------- */
 for(let i = 1; i <= 10; i++) $("proc-nb").add(new Option(String(i), String(i)));
-for(let i = 1; i <= 15; i++) $("proc-pages").add(new Option(String(i), String(i), i === 2, i === 2));
+const PAGES_PROC_DEFAUT = 9;   // nombre de pages par défaut d'une procuration authentique (JFD, 18/10/2026)
+for(let i = 1; i <= 15; i++) $("proc-pages").add(new Option(String(i), String(i), i === PAGES_PROC_DEFAUT, i === PAGES_PROC_DEFAUT));
 $("proc").addEventListener("change", () => { $("proc").dataset.touche = "1"; $("proc-detail").hidden = !$("proc").checked; rendre(); });
 ["proc-nb", "proc-pages"].forEach(id => $(id).addEventListener("change", rendre));
 
@@ -309,16 +318,34 @@ function verifierProcuration(){
   const auth = [...document.querySelectorAll(".doc")].some(l => /procuration/i.test(l.querySelector(".d-nat").value) && l.querySelector(".d-type").value === "IV");
   $("proc").checked = auth; $("proc-detail").hidden = !auth;
 }
+/* Formalité : VERROUILLÉE quand le tableau du ministère est catégorique (apostille, légalisation,
+   dispense, pays sous embargo ou sans relations) ; LIBRE quand il renvoie à la nature du document
+   ou que le pays ou le type d'acte manque. « modifier quand même » déverrouille, l'écart est signalé.
+   (Arbitrage JFD du 18/10/2026.) */
 function majFormalite(l){
   const F = formalitePour($("pays").value.trim(), l.querySelector(".d-type").value);
   const sel = l.querySelector(".d-form");
-  if(F && !sel.dataset.touche) sel.value = F.valeur;
+  const verrou = !!(F && F.verrou) && !sel.dataset.force;
+  if(verrou){ sel.value = F.valeur; delete sel.dataset.touche; }
+  else if(F && !sel.dataset.touche) sel.value = F.valeur;
+  sel.disabled = verrou;
   let txt = F ? F.detail : ($("pays").value.trim() ? "" : "Indiquez le pays de destination.");
-  if(sel.dataset.touche && F && sel.value !== F.valeur) txt = "<b>Choix modifié à la main.</b> Le tableau indique : " + F.detail;
-  l.querySelector(".expl").innerHTML = txt;
-  l.classList.toggle("a-voir", !sel.value || !!(F && F.renvoi));
+  if(verrou) txt += ' <button type="button" class="forcer">modifier quand même</button>';
+  else if(sel.dataset.touche && F && sel.value !== F.valeur) txt = "<b>Choix modifié à la main.</b> Le tableau indique : " + F.detail;
+  const ex = l.querySelector(".expl");
+  if(ex.innerHTML !== txt) ex.innerHTML = txt;   // ne pas recréer le lien sous le doigt du collaborateur
+  l.classList.toggle("a-voir", !sel.value || !!(F && F.renvoi) || !!(sel.dataset.touche && F && sel.value !== F.valeur));
 }
 $("ajout").addEventListener("click", () => { ajouterLigne(); rendre(); });
+/* « modifier quand même » : écouté sur la liste, au premier appui (souris, doigt ou clavier) */
+function forcer(e){
+  const btn = e.target.closest(".forcer"); if(!btn) return;
+  e.preventDefault();
+  const l = btn.closest(".doc"), sel = l.querySelector(".d-form");
+  sel.dataset.force = "1"; sel.disabled = false; majFormalite(l); rendre(); sel.focus();
+}
+$("docs").addEventListener("pointerdown", forcer);
+$("docs").addEventListener("keydown", e => { if(e.key === "Enter" || e.key === " ") forcer(e); });
 
 function lignes(){
   return [...document.querySelectorAll(".doc")].map(l => {
