@@ -46,6 +46,17 @@
   .doc .expl b{color:var(--ink)}
   .doc.a-voir{border-color:rgba(169,138,69,.6)}
   .source{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  [hidden]{display:none!important}
+  .ac{position:relative}
+  .ac-liste{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;list-style:none;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(15,34,56,.14);max-height:300px;overflow-y:auto;padding:4px}
+  .ac-liste li{padding:9px 12px;border-radius:7px;cursor:pointer;font-size:15px;display:flex;justify-content:space-between;gap:10px}
+  .ac-liste li small{color:var(--ink-soft);font-size:12px;white-space:nowrap}
+  .ac-liste li.on,.ac-liste li:hover{background:rgba(51,131,139,.10)}
+  .ac-liste li mark{background:none;color:var(--canard);font-weight:700}
+  .ac-liste li.vide{color:var(--ink-soft);cursor:default;background:none}
+  .chk-proc{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:14px;cursor:pointer;font-size:14px}
+  .chk-proc input{width:auto;margin-top:4px}
+  .chk-proc small{display:block;color:var(--ink-soft);font-size:12.5px}
   .source a{color:var(--emerald-d)}
   .ajout{font:inherit;font-size:13.5px;color:var(--emerald-d);background:none;border:0;cursor:pointer;margin-top:10px;text-decoration:underline}
   .totaux{margin-top:16px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
@@ -96,9 +107,16 @@
       <div class="panel">
         <h2>La demande</h2>
         <label class="fld" for="pays">Pays de destination</label>
-        <input type="text" id="pays" list="pays-liste" placeholder="Espagne, Maroc, États-Unis…" autocomplete="off">
-        <datalist id="pays-liste"></datalist>
+        <div class="ac">
+          <input type="text" id="pays" placeholder="Tapez les premières lettres : Esp, Mar, Éta…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="pays-sugg" aria-autocomplete="list">
+          <ul class="ac-liste" id="pays-sugg" role="listbox" hidden></ul>
+        </div>
         <div class="source" id="source">Chargement du tableau du ministère…</div>
+        <label class="chk-proc"><input type="checkbox" id="proc"><span>Procuration authentique à établir<small>Le décompte ajoute alors les émoluments de l'acte, les copies authentiques, les formalités et le droit d'enregistrement de la procuration.</small></span></label>
+        <div class="duo" id="proc-detail" hidden>
+          <div><label class="fld" for="proc-nb">Nombre de procurations</label><select id="proc-nb"></select></div>
+          <div><label class="fld" for="proc-pages">Pages de la procuration</label><select id="proc-pages"></select></div>
+        </div>
       </div>
     </div>
 
@@ -143,7 +161,7 @@ const TYPE_PAR_NATURE = { "Acte de naissance":"I", "Acte de mariage":"I", "Acte 
   "Extrait de casier judiciaire":"V", "Procuration":"IX", "Attestation sur l'honneur":"IX", "Statuts de société":"IX", "Extrait Kbis":"II",
   "Acte notarié":"IV", "Jugement":"II", "Certificat médical":"IX" };
 const FORMALITES = { "":"À déterminer", apostille:"Apostille", legalisation:"Légalisation", aucune:"Dispense" };
-let TABLEAU = null;
+let TABLEAU = null, LISTE_PAYS = [];
 const NATURES = ["Acte de naissance", "Acte de mariage", "Acte de décès", "Diplôme ou relevé de notes", "Extrait de casier judiciaire",
   "Procuration", "Attestation sur l'honneur", "Statuts de société", "Extrait Kbis", "Acte notarié", "Jugement", "Certificat médical", "Autre document"];
 const ETUDE = { nom: "FIDAL Notaires", l1: "3 place de la Madeleine", l2: "75008 Paris", crpcen: "CRPCEN 75007" };
@@ -159,7 +177,7 @@ async function chargerTableau(){
     const r = await fetch("./legalisation-tableau.json", { cache: "no-cache" });
     if(!r.ok) throw new Error(r.status);
     TABLEAU = await r.json();
-    $("pays-liste").innerHTML = Object.keys(TABLEAU.pays).sort((a, b) => a.localeCompare(b, "fr")).map(p => '<option value="' + p.replace(/"/g, "&quot;") + '">').join("");
+    LISTE_PAYS = Object.keys(TABLEAU.pays).sort((a, b) => a.localeCompare(b, "fr"));
     $("source").innerHTML = 'Formalités d\'après le <a href="' + TABLEAU.lien + '" target="_blank" rel="noopener">tableau du ministère des Affaires étrangères</a>, mise à jour du ' + TABLEAU.miseAJour + '.';
   }catch(e){
     $("source").innerHTML = '<span class="warn">Tableau du ministère introuvable : la formalité se choisit à la main.</span>';
@@ -190,6 +208,77 @@ function formalitePour(nomPays, type){
 }
 $("natures").innerHTML = NATURES.map(p => '<option value="' + p.replace(/"/g, "&quot;") + '">').join("");
 
+/* ---------- pays : suggestions visibles au fil de la frappe (demande JFD du 18/10/2026) ----------
+   Recherche sans accents ni majuscules ; d'abord les pays qui COMMENCENT par la saisie,
+   puis ceux dont un mot commence par la saisie (« zé » → Nouvelle-Zélande). */
+let sugg = [], suggIdx = -1;
+function ouvrirSugg(){
+  const q = sansAccent($("pays").value);
+  const box = $("pays-sugg");
+  if(!LISTE_PAYS.length){ box.hidden = true; return; }
+  const debut = [], mot = [];
+  LISTE_PAYS.forEach(p => {
+    const k = sansAccent(p);
+    if(!q || k.startsWith(q)) debut.push(p);
+    else if(p.split(/[\s\-'’(]+/).some(m => sansAccent(m).startsWith(q))) mot.push(p);
+  });
+  // le pays lui-même avant ses territoires : un mot trouvé hors parenthèses passe devant
+  const horsParenth = p => p.replace(/\(.*$/, "").split(/[\s\-'’]+/).some(m => sansAccent(m).startsWith(q)) ? 0 : 1;
+  mot.sort((a, b) => horsParenth(a) - horsParenth(b));
+  sugg = debut.concat(mot);
+  suggIdx = sugg.length === 1 ? 0 : -1;
+  const v = $("pays").value.trim();
+  const surligne = p => { if(!v) return p; const n = sansAccentPos(p, v); return n ? p.slice(0, n[0]) + "<mark>" + p.slice(n[0], n[1]) + "</mark>" + p.slice(n[1]) : p; };
+  box.innerHTML = sugg.length
+    ? sugg.slice(0, 60).map((p, i) => '<li role="option" data-i="' + i + '"' + (i === suggIdx ? ' class="on"' : '') + '><span>' + surligne(p) + '</span><small>' + formaliteResume(p) + '</small></li>').join("")
+    : '<li class="vide">Aucun pays ne correspond à « ' + v.replace(/</g, "&lt;") + ' »</li>';
+  box.hidden = false; $("pays").setAttribute("aria-expanded", "true");
+}
+function fermerSugg(){ $("pays-sugg").hidden = true; $("pays").setAttribute("aria-expanded", "false"); }
+/* position de la saisie dans le nom, en ignorant les accents (pour la surligner) */
+function sansAccentPos(nom, saisie){
+  const q = sansAccent(saisie); if(!q) return null;
+  for(let i = 0; i < nom.length; i++){
+    let k = "", j = i;
+    while(j < nom.length && k.length < q.length){ k += sansAccent(nom[j]); j++; }
+    if(k === q && (i === 0 || /[\s\-'’(]/.test(nom[i - 1]))) return [i, j];
+  }
+  return null;
+}
+/* rappel discret, à droite, de ce que donne le tableau pour ce pays */
+function formaliteResume(p){
+  const f = TABLEAU && TABLEAU.pays[p]; if(!f) return "";
+  if(f.special) return "légalisation";
+  const LIB = { A: "apostille", L: "légalisation", D: "dispense", R: "selon l'acte" };
+  const n = {}; f.codes.forEach(x => { const k = x[0] === "D" ? "D" : x[0] === "(" ? "R" : x; n[k] = (n[k] || 0) + 1; });
+  const [k, v] = Object.entries(n).sort((a, b) => b[1] - a[1])[0];
+  return v === 9 ? LIB[k] : v >= 5 && k !== "R" ? "surtout " + LIB[k] : "selon l'acte";
+}
+function choisirPays(p){
+  $("pays").value = p; fermerSugg();
+  document.querySelectorAll(".doc").forEach(majFormalite); rendre();
+}
+$("pays").addEventListener("focus", ouvrirSugg);
+$("pays").addEventListener("input", ouvrirSugg);
+$("pays").addEventListener("keydown", e => {
+  const box = $("pays-sugg"); if(box.hidden) return;
+  if(e.key === "ArrowDown" || e.key === "ArrowUp"){
+    e.preventDefault();
+    suggIdx = Math.max(0, Math.min(Math.min(sugg.length, 60) - 1, suggIdx + (e.key === "ArrowDown" ? 1 : -1)));
+    box.querySelectorAll("li[data-i]").forEach(li => li.classList.toggle("on", +li.dataset.i === suggIdx));
+    const on = box.querySelector("li.on"); if(on) on.scrollIntoView({ block: "nearest" });
+  } else if(e.key === "Enter"){ if(suggIdx >= 0 && sugg[suggIdx]){ e.preventDefault(); choisirPays(sugg[suggIdx]); } }
+  else if(e.key === "Escape") fermerSugg();
+});
+$("pays-sugg").addEventListener("mousedown", e => { const li = e.target.closest("li[data-i]"); if(li){ e.preventDefault(); choisirPays(sugg[+li.dataset.i]); } });
+document.addEventListener("click", e => { if(!e.target.closest(".ac")) fermerSugg(); });
+
+/* ---------- procuration authentique (émoluments calculés par COUNTDOWN) ---------- */
+for(let i = 1; i <= 10; i++) $("proc-nb").add(new Option(String(i), String(i)));
+for(let i = 1; i <= 15; i++) $("proc-pages").add(new Option(String(i), String(i), i === 2, i === 2));
+$("proc").addEventListener("change", () => { $("proc").dataset.touche = "1"; $("proc-detail").hidden = !$("proc").checked; rendre(); });
+["proc-nb", "proc-pages"].forEach(id => $(id).addEventListener("change", rendre));
+
 /* ---------- lignes de documents ---------- */
 function ajouterLigne(nature = "", ex = 1){
   const l = document.createElement("div"); l.className = "doc";
@@ -214,6 +303,11 @@ function ajouterLigne(nature = "", ex = 1){
   l.querySelectorAll("input").forEach(i => i.addEventListener("input", rendre));
   $("docs").appendChild(l);
   majFormalite(l);
+}
+function verifierProcuration(){
+  if($("proc").dataset.touche) return;
+  const auth = [...document.querySelectorAll(".doc")].some(l => /procuration/i.test(l.querySelector(".d-nat").value) && l.querySelector(".d-type").value === "IV");
+  $("proc").checked = auth; $("proc-detail").hidden = !auth;
 }
 function majFormalite(l){
   const F = formalitePour($("pays").value.trim(), l.querySelector(".d-type").value);
@@ -248,7 +342,7 @@ function etat(){
     else n.aDeterminer += x.ex;
   });
   return { L, n, client, civ, nom, adresse: $("adresse").value.trim(), email: $("email").value.trim(), tel: $("tel").value.trim(),
-    pays: $("pays").value.trim(), nbdocs: L.reduce((s, x) => s + x.ex, 0) };
+    pays: $("pays").value.trim(), proc: $("proc").checked, procNb: +$("proc-nb").value, procPages: +$("proc-pages").value, nbdocs: L.reduce((s, x) => s + x.ex, 0) };
 }
 function dateLongue(v){ if(!v) return ""; const [a, m, j] = v.split("-").map(Number); return new Date(a, m - 1, j).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
 
@@ -257,12 +351,15 @@ const GENERATEUR = "https://countdown-kappa-azure.vercel.app/convention-honorair
 function lienGenerateur(e){
   const q = new URLSearchParams({ origine: "coffee", civ: e.civ, client: e.client, email: e.email, pays: e.pays, nbdocs: String(e.nbdocs),
     certification: e.n.certification, dispense: e.n.dispense, apostille: e.n.apostille, legalisation: e.n.legalisation });
+  if(e.proc){ q.set("proc", "oui"); q.set("procNb", String(e.procNb)); q.set("procPages", String(e.procPages)); }
   return GENERATEUR + "?" + q.toString();
 }
 function rendre(){
+  verifierProcuration();
   const e = etat();
   const lignesDec = [["Certifications de signature", e.n.certification], ["Dispenses", e.n.dispense], ["Apostilles", e.n.apostille], ["Légalisations", e.n.legalisation]];
   $("decompte").innerHTML = lignesDec.map(([l, v]) => '<div><span>' + l + '</span><span>' + v + '</span></div>').join("")
+    + (e.proc ? '<div><span>Procuration' + (e.procNb > 1 ? 's' : '') + ' authentique' + (e.procNb > 1 ? 's' : '') + ' (' + e.procPages + ' page' + (e.procPages > 1 ? 's' : '') + ')</span><span>' + e.procNb + '</span></div>' : "")
     + (e.n.aDeterminer ? '<div class="ttc"><span class="warn">Formalité à déterminer</span><span class="warn">' + e.n.aDeterminer + '</span></div>' : "");
   const manque = [];
   if(!e.nom) manque.push("le nom du client");
