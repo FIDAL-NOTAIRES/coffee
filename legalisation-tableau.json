@@ -1,0 +1,3000 @@
+{
+ "source": "Ministère de l'Europe et des Affaires étrangères — Tableau récapitulatif de l'état actuel du droit conventionnel en matière de légalisation",
+ "miseAJour": "11/09/2026",
+ "lien": "https://www.diplomatie.gouv.fr/files/files/services/demarches-a-letranger/leg-tableau-recap-du-droit-conventionnel-11-09-26.pdf",
+ "types": {
+  "I": "Actes de l'état civil (naissance, mariage, décès, reconnaissance)",
+  "II": "Actes judiciaires ou extrajudiciaires (Kbis, jugements…)",
+  "III": "Affidavits, déclarations écrites, documents enregistrés ou déposés aux tribunaux judiciaires",
+  "IV": "Actes notariés (copies d'actes en minute ou en brevet, actes authentiques)",
+  "V": "Actes administratifs (diplômes, casiers judiciaires, certificats de nationalité…)",
+  "VI": "Certificats de vie des rentiers viagers",
+  "VII": "Certificats de l'Institut national de la propriété industrielle",
+  "VIII": "Documents établis ou certifiés par les agents diplomatiques ou consulaires",
+  "IX": "Actes sous seing privé portant une mention officielle (certification matérielle de signature)"
+ },
+ "dispenses": {
+  "a": "convention bilatérale",
+  "b": "convention de la Commission internationale de l'état civil du 26 septembre 1957",
+  "c": "convention de la Commission internationale de l'état civil du 15 septembre 1977",
+  "d": "convention du Conseil de l'Europe du 7 juin 1968 (actes des agents diplomatiques ou consulaires)",
+  "e": "convention des Communautés européennes du 25 mai 1987",
+  "f": "convention de la Commission internationale de l'état civil du 8 septembre 1976 (extraits plurilingues ; apostille pour les actes uniquement en français)",
+  "g": "règlement (UE) 2016/1191 du 6 juillet 2016",
+  "h": "convention de Lugano (décisions en matière civile et commerciale rendues depuis le 1er janvier 2011, avec le certificat de l'annexe V ; apostille pour les autres documents)"
+ },
+ "renvois": {
+  "1": {
+   "defaut": "A",
+   "texte": "Légalisation pour les documents établis par une administration ayant trait directement à une opération commerciale ou douanière (certificat sanitaire, attestation de libre vente, certificat de non-radioactivité…) ; apostille pour les autres documents."
+  },
+  "2": {
+   "defaut": "A",
+   "texte": "Légalisation pour les documents administratifs liés à une opération commerciale ou douanière ; dispense (règlement UE 2016/1191) pour les actes publics relatifs à la naissance, au fait d'être en vie, au décès, au nom, au mariage, au divorce, au partenariat enregistré, à la filiation, à l'adoption, au domicile ou à la résidence, à la nationalité, à l'absence de casier judiciaire et aux élections européennes ou municipales ; apostille pour les autres documents."
+  },
+  "3": {
+   "defaut": "A",
+   "texte": "Comme le renvoi (2), avec en outre une dispense (convention bilatérale) pour les documents ayant trait à la protection des mineurs ; apostille pour les autres documents."
+  },
+  "5": {
+   "defaut": "A",
+   "texte": "Dispense pour les actes relatifs à l'état civil, à la capacité ou à la situation familiale, à la nationalité, au domicile et à la résidence, et pour tous actes produits en vue d'un mariage ou de l'établissement d'un acte d'état civil (convention CIEC 1977) ; apostille pour les autres documents."
+  },
+  "6": {
+   "defaut": "",
+   "texte": "Dispense ou apostille/légalisation selon la nature propre de l'acte : se reporter à la catégorie correspondante dans les autres colonnes du tableau."
+  },
+  "7": {
+   "defaut": "A",
+   "texte": "Dispense (règlement UE 2016/1191) pour les actes publics relatifs à l'état civil, au domicile, à la nationalité, à l'absence de casier judiciaire et aux élections ; dispense (convention bilatérale) pour les actes publics et sous seing privé certifiés produits dans une procédure judiciaire civile ou commerciale, hors faillite, concordat et règlement judiciaire ; apostille pour les autres documents."
+  },
+  "8": {
+   "defaut": "A",
+   "texte": "Dispense (règlement UE 2016/1191) pour les actes publics relatifs à l'état civil, au domicile, à la nationalité, à l'absence de casier judiciaire et aux élections ; dispense (convention bilatérale) pour les documents ayant trait à la protection des mineurs ; apostille pour les autres documents."
+  },
+  "9": {
+   "defaut": "A",
+   "texte": "Légalisation pour les documents administratifs liés à une opération commerciale ou douanière ; dispense (convention CIEC 1977) pour les actes relatifs à l'état civil, à la situation familiale, à la nationalité, au domicile, et pour les actes produits en vue d'un mariage ; apostille pour les autres documents."
+  },
+  "10": {
+   "defaut": "A",
+   "texte": "Dispense (règlement UE 2016/1191) pour les actes publics relatifs à la naissance, au fait d'être en vie, au décès, au nom, au mariage, au divorce, au partenariat enregistré, à la filiation, à l'adoption, au domicile ou à la résidence, à la nationalité, à l'absence de casier judiciaire et aux élections ; apostille pour les autres documents."
+  },
+  "11": {
+   "defaut": "A",
+   "texte": "Dispense (convention bilatérale) pour les actes judiciaires ou extrajudiciaires produits dans le cadre d'une procédure d'entraide judiciaire ; apostille pour les autres documents."
+  }
+ },
+ "pays": {
+  "Afghanistan": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Afrique du Sud": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Albanie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Algérie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "(6)",
+    "A"
+   ]
+  },
+  "Allemagne": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Dd",
+    "Da"
+   ]
+  },
+  "Andorre": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Angola": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Antigua-et-Barbuda": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Arabie saoudite": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Argentine": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Arménie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Australie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Autriche": {
+   "codes": [
+    "Dc",
+    "(7)",
+    "(7)",
+    "(7)",
+    "(2)",
+    "Dg",
+    "(7)",
+    "Dd",
+    "(7)"
+   ]
+  },
+  "Azerbaïdjan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bahamas": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bahreïn": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bangladesh": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Barbade": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Belgique": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "Belize": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bénin": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Bhoutan": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Biélorussie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Birmanie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Bolivie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bosnie-Herzégovine": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "Da",
+    "A",
+    "A",
+    "L",
+    "Da"
+   ]
+  },
+  "Botswana": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Brésil": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Brunei": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bulgarie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "(6)",
+    "Da"
+   ]
+  },
+  "Burkina Faso": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Burundi": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Cambodge": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Cameroun": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Canada": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Cap-Vert": {
+   "codes": [
+    "Df",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Centrafrique": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Chili": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Chine": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Chypre": {
+   "codes": [
+    "Dg",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Colombie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Comores": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Congo (Brazzaville)": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Congo (République démocratique)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Corée du Nord": {
+   "special": "Légalisation — pays sans relations diplomatiques avec la France"
+  },
+  "Corée du Sud": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Costa Rica": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Côte d'Ivoire": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Croatie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Cuba": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Danemark": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "Djibouti": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da"
+   ]
+  },
+  "République dominicaine": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Dominique": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Égypte": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Émirats arabes unis": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Équateur": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Érythrée": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Espagne": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Estonie": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "États-Unis": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Éthiopie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Fidji": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Finlande": {
+   "codes": [
+    "Dg",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "(6)",
+    "(10)"
+   ]
+  },
+  "Gabon": {
+   "codes": [
+    "L",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Gambie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Géorgie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Ghana": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Grèce": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Grenade": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Guatemala": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Guinée": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Guinée-Bissau": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Guinée équatoriale": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Guyana": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Haïti": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Honduras": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Hongrie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Inde": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Indonésie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Iran": {
+   "special": "Légalisation — pays sous embargo militaire"
+  },
+  "Irak": {
+   "special": "Légalisation — pays sous embargo militaire (secteur privé)"
+  },
+  "Irlande": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "Islande": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Israël": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Italie": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "Jamaïque": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Japon": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Jordanie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Kazakhstan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Kenya": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Kirghizistan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Kiribati": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "L",
+    "L",
+    "Da",
+    "L",
+    "L"
+   ]
+  },
+  "Kosovo": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Koweït": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Laos": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Lesotho": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Lettonie": {
+   "codes": [
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De",
+    "De"
+   ]
+  },
+  "Liban": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Liberia": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Libye": {
+   "special": "Légalisation — pays sous embargo militaire et financier partiel"
+  },
+  "Liechtenstein": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Lituanie": {
+   "codes": [
+    "Df",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "(6)",
+    "(10)"
+   ]
+  },
+  "Luxembourg": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Macédoine du Nord": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Madagascar": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Malaisie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Malawi": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Maldives": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Mali": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Malte": {
+   "codes": [
+    "Dg",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "(6)",
+    "(10)"
+   ]
+  },
+  "Maroc": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Marshall (îles)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Maurice": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Mauritanie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Mexique": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Micronésie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Moldavie": {
+   "codes": [
+    "Df",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Monaco": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "(1)",
+    "Da",
+    "A",
+    "(6)",
+    "A"
+   ]
+  },
+  "Mongolie": {
+   "codes": [
+    "A",
+    "Da",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Monténégro": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "Da",
+    "A",
+    "A",
+    "L",
+    "Da"
+   ]
+  },
+  "Mozambique": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Namibie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Nauru": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Népal": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Nicaragua": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Niger": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Nigeria": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Norvège": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Nouvelle-Zélande": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Oman": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Ouganda": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Ouzbékistan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Pakistan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Palaos": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Palestine": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Panama": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Papouasie-Nouvelle-Guinée": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Paraguay": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Pays-Bas": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Pérou": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Philippines": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Pologne": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Portugal": {
+   "codes": [
+    "Dc",
+    "(8)",
+    "(8)",
+    "(8)",
+    "(3)",
+    "Dg",
+    "(8)",
+    "Dd",
+    "(8)"
+   ]
+  },
+  "Qatar": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Roumanie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Royaume-Uni": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "(1)",
+    "A",
+    "Da",
+    "Dd",
+    "A"
+   ]
+  },
+  "Russie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Rwanda": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Saint-Christophe-et-Niévès": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Sainte-Lucie": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Saint-Marin": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "(1)",
+    "Da",
+    "A",
+    "(6)",
+    "A"
+   ]
+  },
+  "Saint-Siège (Vatican)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Saint-Vincent-et-les-Grenadines": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Salomon (îles)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Salvador": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Samoa": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Sao Tomé-et-Principe": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Sénégal": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "(6)",
+    "A"
+   ]
+  },
+  "Serbie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "Da",
+    "A",
+    "A",
+    "L",
+    "Da"
+   ]
+  },
+  "Seychelles": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Sierra Leone": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Singapour": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Slovaquie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Slovénie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Somalie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Soudan": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Soudan du Sud": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Sri Lanka": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Suède": {
+   "codes": [
+    "Dc",
+    "(10)",
+    "(10)",
+    "(10)",
+    "(2)",
+    "Dg",
+    "A",
+    "Dd",
+    "(10)"
+   ]
+  },
+  "Suisse": {
+   "codes": [
+    "Db",
+    "Dh",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Suriname": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Eswatini (Swaziland)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Syrie": {
+   "special": "Légalisation — pays sous embargo commercial et militaire"
+  },
+  "Tadjikistan": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Taïwan": {
+   "special": "Légalisation — pays sans relations diplomatiques avec la France"
+  },
+  "Tanzanie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Tchad": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "L",
+    "Da",
+    "L",
+    "(6)",
+    "L"
+   ]
+  },
+  "Tchéquie": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Timor oriental": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Thaïlande": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Togo": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da",
+    "Da"
+   ]
+  },
+  "Tonga": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Trinité-et-Tobago": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Tunisie": {
+   "codes": [
+    "Da",
+    "Da",
+    "A",
+    "A",
+    "Da",
+    "Da",
+    "Da",
+    "(6)",
+    "Da"
+   ]
+  },
+  "Turkménistan": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Turquie": {
+   "codes": [
+    "Dc",
+    "(5)",
+    "(5)",
+    "(5)",
+    "(9)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Tuvalu": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Ukraine": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Uruguay": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Vanuatu": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Venezuela": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Viêt Nam": {
+   "codes": [
+    "Da",
+    "(11)",
+    "Da",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A",
+    "A"
+   ]
+  },
+  "Yémen": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Zambie": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Zimbabwe": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Anguilla (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Antilles néerlandaises": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Aruba (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Bermudes (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Bonaire (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Caïmans (îles) (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Cook (îles) (Nouvelle-Zélande)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Curaçao (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Falkland (îles) (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Féroé (îles) (Danemark)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Géorgie du Sud (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Gibraltar (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Groenland (Danemark)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Guam (États-Unis)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Guernesey (Royaume-Uni)": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "(1)",
+    "A",
+    "Da",
+    "Dd",
+    "A"
+   ]
+  },
+  "Hong Kong (Chine)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Jersey (Royaume-Uni)": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "(1)",
+    "A",
+    "Da",
+    "Dd",
+    "A"
+   ]
+  },
+  "Macao (Chine)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Man (île de) (Royaume-Uni)": {
+   "codes": [
+    "Da",
+    "Da",
+    "Da",
+    "A",
+    "(1)",
+    "A",
+    "Da",
+    "Dd",
+    "A"
+   ]
+  },
+  "Mariannes du Nord (États-Unis)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Montserrat (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Niue (Nouvelle-Zélande)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Pitcairn (Royaume-Uni)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Porto Rico (États-Unis)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Saba (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Saint-Eustache (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Saint-Martin, partie néerlandaise (Pays-Bas)": {
+   "codes": [
+    "Db",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "Dd",
+    "A"
+   ]
+  },
+  "Sainte-Hélène (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Samoa américaines (États-Unis)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Territoire antarctique britannique": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Tokelau (Nouvelle-Zélande)": {
+   "codes": [
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L",
+    "L"
+   ]
+  },
+  "Turques-et-Caïques (Royaume-Uni)": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Îles Vierges américaines": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  },
+  "Îles Vierges britanniques": {
+   "codes": [
+    "A",
+    "A",
+    "A",
+    "A",
+    "(1)",
+    "A",
+    "A",
+    "L",
+    "A"
+   ]
+  }
+ }
+}

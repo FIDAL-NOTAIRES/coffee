@@ -36,11 +36,19 @@
   .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .trio{display:grid;grid-template-columns:130px 1fr 1fr;gap:10px}
   @media(max-width:480px){.trio{grid-template-columns:1fr}}
-  .doc{display:grid;grid-template-columns:1fr 78px 110px 34px;gap:8px;align-items:center;margin-top:8px}
-  .doc input{padding:8px 10px}
+  .doc{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:10px;background:#FBFBF8}
+  .doc .r1{display:grid;grid-template-columns:1fr 34px;gap:8px;align-items:center}
+  .doc .r2{display:grid;grid-template-columns:1fr 70px 100px;gap:8px;margin-top:8px}
+  .doc .r3{display:grid;grid-template-columns:150px 1fr;gap:8px;margin-top:8px;align-items:start}
+  @media(max-width:480px){.doc .r2{grid-template-columns:1fr 60px 90px}.doc .r3{grid-template-columns:1fr}}
+  .doc input,.doc select{padding:8px 10px;background:#fff}
+  .doc .mini{display:block;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px}
   .doc .sup{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink-soft);font-size:18px;line-height:1}
-  .doc-tete{display:grid;grid-template-columns:1fr 78px 110px 34px;gap:8px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-top:12px}
-  @media(max-width:480px){.doc,.doc-tete{grid-template-columns:1fr 60px 90px 34px}}
+  .doc .expl{font-size:12.5px;color:var(--ink-soft);line-height:1.4;padding-top:2px}
+  .doc .expl b{color:var(--ink)}
+  .doc.a-voir{border-color:rgba(169,138,69,.6)}
+  .source{font-size:12px;color:var(--ink-soft);margin-top:6px}
+  .source a{color:var(--emerald-d)}
   .ajout{font:inherit;font-size:13.5px;color:var(--emerald-d);background:none;border:0;cursor:pointer;margin-top:10px;text-decoration:underline}
   .totaux{margin-top:16px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
   .totaux div{display:flex;justify-content:space-between;padding:3px 0}
@@ -92,13 +100,7 @@
         <label class="fld" for="pays">Pays de destination</label>
         <input type="text" id="pays" list="pays-liste" placeholder="Espagne, Maroc, États-Unis…" autocomplete="off">
         <datalist id="pays-liste"></datalist>
-        <label class="fld" for="formalite">Formalité <small>— à choisir à la main tant que le tableau du ministère n'est pas branché</small></label>
-        <select id="formalite">
-          <option value="">À déterminer par l'étude</option>
-          <option value="apostille">Apostille</option>
-          <option value="legalisation">Légalisation</option>
-          <option value="aucune">Aucune formalité (dispense)</option>
-        </select>
+        <div class="source" id="source">Chargement du tableau du ministère…</div>
         <div class="duo">
           <div><label class="fld" for="delai">Délai souhaité</label><input type="date" id="delai"></div>
           <div><label class="fld" for="ref">Référence de la note</label><input type="text" id="ref"></div>
@@ -109,8 +111,7 @@
     <div>
       <div class="panel">
         <h2>Documents et honoraires</h2>
-        <div class="hint">Une ligne par nature de document. Le prix unitaire se remplira seul quand le barème de l'étude sera intégré ; d'ici là, saisissez-le.</div>
-        <div class="doc-tete"><span>Nature du document</span><span>Exempl.</span><span>Prix HT</span><span></span></div>
+        <div class="hint">Une ligne par nature de document. La formalité se déduit du pays et du type d'acte, d'après le tableau du ministère ; elle reste modifiable. Le prix unitaire se remplira seul quand le barème de l'étude sera intégré.</div>
         <div id="docs"></div>
         <datalist id="natures"></datalist>
         <button type="button" class="ajout" id="ajout">Ajouter un document</button>
@@ -159,11 +160,14 @@
 const BAREME = {
   // "Acte de naissance": 0,
 };
+/* Nature proposée → type d'acte du tableau du ministère (colonnes I à IX) */
+const TYPE_PAR_NATURE = { "Acte de naissance":"I", "Acte de mariage":"I", "Acte de décès":"I", "Diplôme ou relevé de notes":"V",
+  "Extrait de casier judiciaire":"V", "Procuration":"IX", "Attestation sur l'honneur":"IX", "Statuts de société":"IX", "Extrait Kbis":"II",
+  "Acte notarié":"IV", "Jugement":"II", "Certificat médical":"IX" };
+const FORMALITES = { "":"À déterminer", apostille:"Apostille", legalisation:"Légalisation", aucune:"Dispense" };
+let TABLEAU = null;
 const NATURES = ["Acte de naissance", "Acte de mariage", "Acte de décès", "Diplôme ou relevé de notes", "Extrait de casier judiciaire",
   "Procuration", "Attestation sur l'honneur", "Statuts de société", "Extrait Kbis", "Acte notarié", "Jugement", "Certificat médical", "Autre document"];
-const PAYS = ["Afrique du Sud","Algérie","Allemagne","Arabie saoudite","Argentine","Australie","Belgique","Brésil","Cameroun","Canada","Chine","Colombie",
-  "Côte d'Ivoire","Égypte","Émirats arabes unis","Espagne","États-Unis","Inde","Israël","Italie","Japon","Liban","Luxembourg","Madagascar","Maroc",
-  "Mexique","Monaco","Pays-Bas","Portugal","Qatar","Royaume-Uni","Russie","Sénégal","Suisse","Tunisie","Turquie","Viêt Nam"];
 const TVA = 0.20;
 const ETUDE = { nom: "FIDAL Notaires", l1: "3 place de la Madeleine", l2: "75008 Paris", crpcen: "CRPCEN 75007" };
 
@@ -172,7 +176,41 @@ const eur = n => (Math.round(n * 100) / 100).toLocaleString("fr-FR", { minimumFr
 const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isFinite(n) && n > 0 ? n : 0; };
 const nomFichier = s => (s || "").replace(/[\\/:*?"<>|]+/g, "-").trim();
 
-$("pays-liste").innerHTML = PAYS.map(p => '<option value="' + p + '">').join("");
+const sansAccent = x => (x || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "");
+async function chargerTableau(){
+  try{
+    const r = await fetch("./legalisation-tableau.json", { cache: "no-cache" });
+    if(!r.ok) throw new Error(r.status);
+    TABLEAU = await r.json();
+    $("pays-liste").innerHTML = Object.keys(TABLEAU.pays).sort((a, b) => a.localeCompare(b, "fr")).map(p => '<option value="' + p.replace(/"/g, "&quot;") + '">').join("");
+    $("source").innerHTML = 'Formalités d\'après le <a href="' + TABLEAU.lien + '" target="_blank" rel="noopener">tableau du ministère des Affaires étrangères</a>, mise à jour du ' + TABLEAU.miseAJour + '.';
+  }catch(e){
+    $("source").innerHTML = '<span class="warn">Tableau du ministère introuvable : la formalité se choisit à la main.</span>';
+  }
+  document.querySelectorAll(".doc").forEach(majFormalite); rendre();
+}
+function paysDuTableau(nom){
+  if(!TABLEAU || !nom) return null;
+  if(TABLEAU.pays[nom]) return [nom, TABLEAU.pays[nom]];
+  const k = sansAccent(nom);
+  const trouve = Object.keys(TABLEAU.pays).find(p => sansAccent(p) === k) || Object.keys(TABLEAU.pays).find(p => sansAccent(p).startsWith(k) && k.length >= 4);
+  return trouve ? [trouve, TABLEAU.pays[trouve]] : null;
+}
+/* Formalité pour un pays et un type d'acte : {valeur, detail} */
+function formalitePour(nomPays, type){
+  if(!TABLEAU) return null;
+  const P = paysDuTableau(nomPays);
+  if(!P) return nomPays ? { valeur: "", detail: "Pays absent du tableau du ministère : formalité à déterminer." } : null;
+  const [nom, f] = P;
+  if(f.special) return { valeur: "legalisation", detail: f.special + "." };
+  if(!type) return { valeur: "", detail: "Choisissez le type d'acte pour connaître la formalité." };
+  const code = f.codes[["I","II","III","IV","V","VI","VII","VIII","IX"].indexOf(type)];
+  if(code === "A") return { valeur: "apostille", detail: nom + " : apostille." };
+  if(code === "L") return { valeur: "legalisation", detail: nom + " : légalisation." };
+  if(code[0] === "D") return { valeur: "aucune", detail: nom + " : dispense de légalisation (" + (TABLEAU.dispenses[code[1]] || "convention") + ")." };
+  const n = code.replace(/[()]/g, ""), R = TABLEAU.renvois[n];
+  return { valeur: R && R.defaut === "A" ? "apostille" : "", detail: nom + ", renvoi (" + n + ") : " + (R ? R.texte : "voir le tableau du ministère.") + (R && R.defaut === "A" ? " Apostille proposée par défaut." : ""), renvoi: true };
+}
 $("natures").innerHTML = NATURES.map(p => '<option value="' + p.replace(/"/g, "&quot;") + '">').join("");
 (function refDefaut(){ const d = new Date(), z = n => String(n).padStart(2, "0");
   $("ref").value = "LEG-" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "-" + z(d.getHours()) + z(d.getMinutes()); })();
@@ -180,20 +218,39 @@ $("natures").innerHTML = NATURES.map(p => '<option value="' + p.replace(/"/g, "&
 /* ---------- lignes de documents ---------- */
 function ajouterLigne(nature = "", ex = 1){
   const l = document.createElement("div"); l.className = "doc";
-  l.innerHTML = '<input type="text" class="d-nat" list="natures" placeholder="Acte de naissance" autocomplete="off" aria-label="Nature du document">'
-    + '<input type="number" class="d-ex" min="1" step="1" inputmode="numeric" aria-label="Nombre d\'exemplaires">'
-    + '<input type="number" class="d-pu" min="0" step="0.01" inputmode="decimal" placeholder="0,00" aria-label="Prix unitaire hors taxes">'
-    + '<button type="button" class="sup" title="Retirer cette ligne" aria-label="Retirer cette ligne">×</button>';
+  const types = TABLEAU ? TABLEAU.types : {I:"État civil",II:"Actes judiciaires",III:"Déclarations déposées aux tribunaux",IV:"Actes notariés",V:"Actes administratifs",VI:"Certificats de vie",VII:"Certificats de l'INPI",VIII:"Documents consulaires",IX:"Actes sous seing privé avec certification de signature"};
+  l.innerHTML = '<div class="r1"><div><span class="mini">Nature du document</span><input type="text" class="d-nat" list="natures" placeholder="Acte de naissance" autocomplete="off"></div>'
+    + '<button type="button" class="sup" title="Retirer cette ligne" aria-label="Retirer cette ligne" style="margin-top:16px">×</button></div>'
+    + '<div class="r2"><div><span class="mini">Type d\'acte (tableau du ministère)</span><select class="d-type"><option value="">— à choisir —</option>'
+    + Object.entries(types).map(([k, v]) => '<option value="' + k + '">' + k + ' · ' + v.replace(/\s*\(.*$/, "") + '</option>').join("") + '</select></div>'
+    + '<div><span class="mini">Exempl.</span><input type="number" class="d-ex" min="1" step="1" inputmode="numeric"></div>'
+    + '<div><span class="mini">Prix HT</span><input type="number" class="d-pu" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div></div>'
+    + '<div class="r3"><div><span class="mini">Formalité</span><select class="d-form">' + Object.entries(FORMALITES).map(([k, v]) => '<option value="' + k + '">' + v + '</option>').join("") + '</select></div>'
+    + '<div class="expl"></div></div>';
   l.querySelector(".d-nat").value = nature; l.querySelector(".d-ex").value = ex;
   l.querySelector(".d-nat").addEventListener("change", () => {
-    const pu = BAREME[l.querySelector(".d-nat").value.trim()];
+    const nat = l.querySelector(".d-nat").value.trim();
+    const pu = BAREME[nat];
     if(pu != null && !l.querySelector(".d-pu").dataset.touche) l.querySelector(".d-pu").value = pu;
-    rendre();
+    if(TYPE_PAR_NATURE[nat] && !l.querySelector(".d-type").dataset.touche) l.querySelector(".d-type").value = TYPE_PAR_NATURE[nat];
+    majFormalite(l); rendre();
   });
+  l.querySelector(".d-type").addEventListener("change", e => { e.target.dataset.touche = "1"; majFormalite(l); rendre(); });
+  l.querySelector(".d-form").addEventListener("change", e => { e.target.dataset.touche = "1"; majFormalite(l); rendre(); });
   l.querySelector(".d-pu").addEventListener("input", e => { e.target.dataset.touche = "1"; });
   l.querySelector(".sup").addEventListener("click", () => { l.remove(); if(!document.querySelector(".doc")) ajouterLigne(); rendre(); });
   l.querySelectorAll("input").forEach(i => i.addEventListener("input", rendre));
   $("docs").appendChild(l);
+  majFormalite(l);
+}
+function majFormalite(l){
+  const F = formalitePour($("pays").value.trim(), l.querySelector(".d-type").value);
+  const sel = l.querySelector(".d-form");
+  if(F && !sel.dataset.touche) sel.value = F.valeur;
+  let txt = F ? F.detail : ($("pays").value.trim() ? "" : "Indiquez le pays de destination.");
+  if(sel.dataset.touche && F && sel.value !== F.valeur) txt = "<b>Choix modifié à la main.</b> Le tableau indique : " + F.detail;
+  l.querySelector(".expl").innerHTML = txt;
+  l.classList.toggle("a-voir", !sel.value || !!(F && F.renvoi));
 }
 $("ajout").addEventListener("click", () => { ajouterLigne(); rendre(); });
 
@@ -202,7 +259,8 @@ function lignes(){
     const nature = l.querySelector(".d-nat").value.trim();
     const ex = Math.max(1, Math.round(num(l.querySelector(".d-ex").value)) || 1);
     const pu = num(l.querySelector(".d-pu").value);
-    return { nature, ex, pu, total: ex * pu };
+    const formalite = l.querySelector(".d-form").value;
+    return { nature, ex, pu, total: ex * pu, type: l.querySelector(".d-type").value, formalite, formaliteLib: FORMALITES[formalite] };
   }).filter(x => x.nature);
 }
 function etat(){
@@ -210,9 +268,8 @@ function etat(){
   const ht = L.reduce((s, x) => s + x.total, 0), tva = ht * TVA, deb = num($("debours").value);
   const civ = $("civ").value, nom = $("nom").value.trim(), prenom = $("prenom").value.trim();
   const client = civ ? (civ + " " + (prenom ? prenom + " " : "") + nom.toUpperCase()).trim() : nom;
-  const form = $("formalite");
   return { L, ht, tva, deb, ttc: ht + tva + deb, client, civ, nom, adresse: $("adresse").value.trim(), email: $("email").value.trim(), tel: $("tel").value.trim(),
-    pays: $("pays").value.trim(), formalite: form.value, formaliteLib: form.value ? form.options[form.selectedIndex].text : "", delai: $("delai").value, ref: $("ref").value.trim() };
+    pays: $("pays").value.trim(), delai: $("delai").value, ref: $("ref").value.trim() };
 }
 function dateLongue(v){ if(!v) return ""; const [a, m, j] = v.split("-").map(Number); return new Date(a, m - 1, j).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
 
@@ -224,7 +281,9 @@ function rendre(){
   if(!e.pays) manque.push("le pays de destination");
   if(!e.L.length) manque.push("au moins un document");
   const sansPrix = e.L.filter(x => !x.pu).length;
+  const sansForm = e.L.filter(x => !x.formalite).length;
   $("recap").innerHTML = manque.length ? '<span class="warn">Manque ' + manque.join(", ") + ".</span>"
+    : sansForm ? '<span class="warn">' + sansForm + " document" + (sansForm > 1 ? "s" : "") + " sans formalité déterminée : la note portera « à déterminer ».</span>"
     : (sansPrix ? '<span class="warn">' + sansPrix + " ligne" + (sansPrix > 1 ? "s" : "") + " sans prix : la note portera 0,00 € pour " + (sansPrix > 1 ? "ces lignes" : "cette ligne") + ".</span>" : "Note prête.");
   $("email").classList.toggle("ko", !!e.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email));
   $("partager").disabled = $("telecharger").disabled = !!manque.length;
@@ -235,7 +294,11 @@ function corpsMail(e){
   const civ = e.civ ? e.civ : "Madame, Monsieur";
   const plur = e.L.length > 1 || (e.L[0] && e.L[0].ex > 1);
   const leur = plur ? "leur" : "sa";
-  const but = e.formalite === "apostille" ? leur + " apostille" : e.formalite === "aucune" ? leur + " utilisation à l'étranger" : leur + " légalisation";
+  const fs = [...new Set(e.L.map(x => x.formalite).filter(Boolean))];
+  const but = fs.length === 1 && fs[0] === "apostille" ? leur + " apostille"
+    : fs.length === 1 && fs[0] === "legalisation" ? leur + " légalisation"
+    : fs.length === 1 && fs[0] === "aucune" ? leur + " utilisation à l'étranger"
+    : fs.length > 1 ? leur + " apostille ou " + leur + " légalisation selon les documents" : leur + " légalisation ou " + leur + " apostille";
   return civ + ",\n\nVous trouverez ci-joint la note d'honoraires relative à la certification "
     + (plur ? "de vos documents" : "de votre document") + " en vue de " + but
     + (e.pays ? " (destination : " + e.pays + ")" : "") + ".\n\nNotre étude se charge de l'ensemble des démarches"
@@ -287,23 +350,25 @@ async function fabriquerNote(e){
   y = Math.min(y, 640) - 18;
   ecrire("Objet", M, y, { b: true, c: canard });
   const objet = "Certification de " + (e.L.length > 1 ? "documents" : "document") + " destiné" + (e.L.length > 1 ? "s" : "") + " à l'étranger"
-    + (e.pays ? " — pays de destination : " + e.pays : "") + (e.formaliteLib && e.formalite ? " — formalité : " + e.formaliteLib.toLowerCase() : " — formalité déterminée par l'étude");
+    + (e.pays ? " — pays de destination : " + e.pays : "");
   couper(objet, W - 2 * M - 60).forEach((l, i) => { ecrire(l, M + 60, y - i * 14); }); y -= 14 * couper(objet, W - 2 * M - 60).length;
   if(e.delai){ ecrire("Délai", M, y - 4, { b: true, c: canard }); ecrire("Remise souhaitée au plus tard le " + dateLongue(e.delai), M + 60, y - 4); y -= 18; }
 
   // tableau
   y -= 22;
-  const cEx = 310, cPu = 405, cTot = W - M;
+  const cForm = 238, cEx = 360, cPu = 445, cTot = W - M;
   page.drawRectangle({ x: M, y: y - 6, width: W - 2 * M, height: 22, color: nuit });
   ecrire("Nature du document", M + 8, y, { b: true, c: rgb(1, 1, 1) });
-  droite("Exemplaires", cEx + 30, y, { b: true, c: rgb(1, 1, 1) });
-  droite("Prix unitaire HT", cPu + 40, y, { b: true, c: rgb(1, 1, 1) });
+  ecrire("Formalité", cForm, y, { b: true, c: rgb(1, 1, 1) });
+  droite("Exempl.", cEx, y, { b: true, c: rgb(1, 1, 1) });
+  droite("Prix unit. HT", cPu, y, { b: true, c: rgb(1, 1, 1) });
   droite("Total HT", cTot - 8, y, { b: true, c: rgb(1, 1, 1) });
   y -= 24;
   for(const x of e.L){
-    const ls = couper(x.nature, cEx - M - 80);
+    const ls = couper(x.nature, cForm - M - 16);
     ls.forEach((l, i) => ecrire(l, M + 8, y - i * 13));
-    droite(String(x.ex), cEx + 30, y); droite(eur(x.pu), cPu + 40, y); droite(eur(x.total), cTot - 8, y);
+    ecrire(x.formalite ? x.formaliteLib : "À déterminer", cForm, y);
+    droite(String(x.ex), cEx, y); droite(eur(x.pu), cPu, y); droite(eur(x.total), cTot - 8, y);
     y -= 13 * ls.length + 6;
     page.drawLine({ start: { x: M, y: y + 2 }, end: { x: W - M, y: y + 2 }, thickness: 0.6, color: filet });
     y -= 10;
@@ -320,6 +385,7 @@ async function fabriquerNote(e){
   // mentions
   y -= 20;
   const mentions = ["L'étude se charge de l'ensemble du circuit : certification des documents puis formalité requise par le pays de destination.",
+    "Formalités indiquées d'après le tableau du ministère de l'Europe et des Affaires étrangères" + (TABLEAU ? " (mise à jour du " + TABLEAU.miseAJour + ")" : "") + ".",
     "Règlement à réception de la présente note."];
   mentions.forEach(m => { couper(m, W - 2 * M, 9).forEach(l => { ecrire(l, M, y, { s: 9, c: gris }); y -= 12; }); y -= 2; });
 
@@ -349,11 +415,13 @@ $("telecharger").addEventListener("click", async () => {
   $("status").textContent = "Note téléchargée." + (segoe ? "" : " (Police de secours : Segoe UI non trouvée dans le dépôt.)");
 });
 
-["civ", "nom", "prenom", "adresse", "email", "tel", "pays", "formalite", "delai", "ref", "debours"].forEach(id => $(id).addEventListener("input", rendre));
-$("formalite").addEventListener("change", rendre); $("civ").addEventListener("change", rendre);
+["civ", "nom", "prenom", "adresse", "email", "tel", "delai", "ref", "debours"].forEach(id => $(id).addEventListener("input", rendre));
+$("civ").addEventListener("change", rendre);
+["input", "change"].forEach(ev => $("pays").addEventListener(ev, () => { document.querySelectorAll(".doc").forEach(majFormalite); rendre(); }));
 if(typeof PDFLib === "undefined") $("status").innerHTML = '<span class="warn">Bibliothèque PDF non chargée : vérifiez la connexion puis rechargez la page.</span>';
 ajouterLigne();
 rendre();
+chargerTableau();
 </script>
 </body>
 </html>
