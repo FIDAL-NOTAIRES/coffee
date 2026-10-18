@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2238">
+<title>COFFEE · Légalisation</title>
+<link rel="icon" type="image/svg+xml" href="coffee-favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@pdf-lib/fontkit@1.1.1/dist/fontkit.umd.min.js"></script>
+<style>
+  :root{--ink:#20283D;--ink-soft:#4A5269;--paper:#EEEEE9;--card:#FFFFFF;--line:#DEDCD3;--emerald:#2E5A4B;--emerald-d:#244A3D;--urgent:#B5462F;--gold:#A98A45;--canard:#33838B;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.5;padding:18px;padding-top:calc(18px + env(safe-area-inset-top,0px))}
+  .wrap{max-width:1080px;margin:0 auto}
+  header{margin-bottom:22px}
+  .back{display:table;font-size:13px;color:var(--ink-soft);text-decoration:none;margin-bottom:12px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--canard);margin-bottom:10px}
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--canard);box-shadow:0 0 0 4px rgba(51,131,139,.14)}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:30px;letter-spacing:-.01em;line-height:1.05}
+  .sub{color:var(--ink-soft);font-size:14.5px;margin-top:4px;max-width:70ch}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+  .panel+.panel{margin-top:18px}
+  .panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin-bottom:4px}
+  .hint{color:var(--ink-soft);font-size:13px;margin-bottom:10px}
+  label.fld{display:block;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:14px 0 6px}
+  label.fld small{font-weight:400;text-transform:none;letter-spacing:0}
+  input,select{width:100%;font:inherit;color:var(--ink);background:#FBFBF8;border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+  input.ko{border-color:var(--urgent)}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .trio{display:grid;grid-template-columns:130px 1fr 1fr;gap:10px}
+  @media(max-width:480px){.trio{grid-template-columns:1fr}}
+  .doc{display:grid;grid-template-columns:1fr 78px 110px 34px;gap:8px;align-items:center;margin-top:8px}
+  .doc input{padding:8px 10px}
+  .doc .sup{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink-soft);font-size:18px;line-height:1}
+  .doc-tete{display:grid;grid-template-columns:1fr 78px 110px 34px;gap:8px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin-top:12px}
+  @media(max-width:480px){.doc,.doc-tete{grid-template-columns:1fr 60px 90px 34px}}
+  .ajout{font:inherit;font-size:13.5px;color:var(--emerald-d);background:none;border:0;cursor:pointer;margin-top:10px;text-decoration:underline}
+  .totaux{margin-top:16px;border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+  .totaux div{display:flex;justify-content:space-between;padding:3px 0}
+  .totaux .ttc{font-weight:600;font-size:15.5px;border-top:1px solid var(--line);margin-top:4px;padding-top:7px}
+  .btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px 18px;cursor:pointer;flex:1;min-width:150px;text-align:center;text-decoration:none;display:inline-block}
+  .btn-main{background:var(--emerald);color:#fff}
+  .btn-main:hover{background:var(--emerald-d)}
+  .btn-main:disabled,.btn-main[aria-disabled="true"]{background:#B9BDB7;cursor:not-allowed;pointer-events:none}
+  .btn-sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn-sec[aria-disabled="true"]{opacity:.45;pointer-events:none}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .recap{font-size:13px;color:var(--ink-soft);margin-top:10px}
+  .warn{color:var(--urgent)}
+  .status{font-size:12.5px;color:var(--emerald-d);margin-top:8px;min-height:16px}
+  .legend{font-size:12px;color:var(--ink-soft);margin-top:10px}
+  footer{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:28px}
+  :focus-visible{outline:2px solid var(--emerald);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="back" href="./index.html">&larr; COFFEE · Réflexes en séance</a>
+    <div class="eyebrow">Accueil sans rendez-vous · Légalisation</div>
+    <div class="wordmark">Légalisation d'un document</div>
+    <div class="sub">Un client se présente pour faire certifier un document destiné à l'étranger. On recueille les premières informations et on lui remet la note d'honoraires ; l'étude se charge de tout le circuit.</div>
+  </header>
+
+  <div class="grid">
+    <div>
+      <div class="panel">
+        <h2>Le client</h2>
+        <div class="trio">
+          <div><label class="fld" for="civ">Civilité</label>
+            <select id="civ"><option value="Madame">Madame</option><option value="Monsieur">Monsieur</option><option value="">Société</option></select></div>
+          <div><label class="fld" for="nom">Nom ou raison sociale</label><input type="text" id="nom" autocomplete="off"></div>
+          <div><label class="fld" for="prenom">Prénom</label><input type="text" id="prenom" autocomplete="off"></div>
+        </div>
+        <label class="fld" for="adresse">Adresse</label>
+        <input type="text" id="adresse" placeholder="Numéro, voie, code postal, commune" autocomplete="off">
+        <div class="duo">
+          <div><label class="fld" for="email">Courriel</label><input type="email" id="email" inputmode="email" autocomplete="off"></div>
+          <div><label class="fld" for="tel">Portable</label><input type="tel" id="tel" inputmode="tel" autocomplete="off"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>La demande</h2>
+        <label class="fld" for="pays">Pays de destination</label>
+        <input type="text" id="pays" list="pays-liste" placeholder="Espagne, Maroc, États-Unis…" autocomplete="off">
+        <datalist id="pays-liste"></datalist>
+        <label class="fld" for="formalite">Formalité <small>— à choisir à la main tant que le tableau du ministère n'est pas branché</small></label>
+        <select id="formalite">
+          <option value="">À déterminer par l'étude</option>
+          <option value="apostille">Apostille</option>
+          <option value="legalisation">Légalisation</option>
+          <option value="aucune">Aucune formalité (dispense)</option>
+        </select>
+        <div class="duo">
+          <div><label class="fld" for="delai">Délai souhaité</label><input type="date" id="delai"></div>
+          <div><label class="fld" for="ref">Référence de la note</label><input type="text" id="ref"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h2>Documents et honoraires</h2>
+        <div class="hint">Une ligne par nature de document. Le prix unitaire se remplira seul quand le barème de l'étude sera intégré ; d'ici là, saisissez-le.</div>
+        <div class="doc-tete"><span>Nature du document</span><span>Exempl.</span><span>Prix HT</span><span></span></div>
+        <div id="docs"></div>
+        <datalist id="natures"></datalist>
+        <button type="button" class="ajout" id="ajout">Ajouter un document</button>
+
+        <label class="fld" for="debours">Débours <small>— frais avancés pour le compte du client (consulat, traduction…), sans TVA</small></label>
+        <input type="number" id="debours" min="0" step="0.01" inputmode="decimal" placeholder="0,00">
+
+        <div class="totaux">
+          <div><span>Honoraires hors taxes</span><span id="t-ht">0,00 €</span></div>
+          <div><span>TVA 20 %</span><span id="t-tva">0,00 €</span></div>
+          <div><span>Débours</span><span id="t-deb">0,00 €</span></div>
+          <div class="ttc"><span>Total à régler</span><span id="t-ttc">0,00 €</span></div>
+        </div>
+        <div class="recap" id="recap"></div>
+
+        <div class="actions">
+          <button class="btn btn-main" id="partager" disabled>Envoyer la note au client</button>
+        </div>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn btn-sec" id="telecharger" disabled>Télécharger la note</button>
+          <a class="btn btn-sec" id="mail" href="#" target="_top">Ouvrir le mail sans pièce</a>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="legend">« Envoyer la note au client » ouvre le menu de partage de l'appareil avec la note en PDF jointe : choisissez Mail, Outlook ou Messages. À défaut, téléchargez la note et joignez-la au mail ouvert par le dernier bouton.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>COFFEE · FIDAL Notaires — Paris · gamme FIDAL Apps</footer>
+</div>
+
+<script>
+/* ======================================================================
+   COFFEE — Légalisation : fiche d'accueil et note d'honoraires
+   Arbitrages JFD (16-17/10/2026) : client sans rendez-vous venu faire
+   certifier un document en vue de sa légalisation ; l'étude gère tout le
+   circuit ; on recueille pays de destination, nature du document, nombre
+   d'exemplaires, délai souhaité et coordonnées, qui pré-remplissent la
+   note d'honoraires adressée au client.
+   EN ATTENTE DE JFD : le barème (BAREME ci-dessous) et le tableau du
+   ministère pays × type d'acte (remplira la formalité tout seul).
+   ====================================================================== */
+
+/* Barème des honoraires de l'étude, hors taxes, par exemplaire.
+   Clé = nature du document telle que proposée dans la liste. Vide pour l'instant. */
+const BAREME = {
+  // "Acte de naissance": 0,
+};
+const NATURES = ["Acte de naissance", "Acte de mariage", "Acte de décès", "Diplôme ou relevé de notes", "Extrait de casier judiciaire",
+  "Procuration", "Attestation sur l'honneur", "Statuts de société", "Extrait Kbis", "Acte notarié", "Jugement", "Certificat médical", "Autre document"];
+const PAYS = ["Afrique du Sud","Algérie","Allemagne","Arabie saoudite","Argentine","Australie","Belgique","Brésil","Cameroun","Canada","Chine","Colombie",
+  "Côte d'Ivoire","Égypte","Émirats arabes unis","Espagne","États-Unis","Inde","Israël","Italie","Japon","Liban","Luxembourg","Madagascar","Maroc",
+  "Mexique","Monaco","Pays-Bas","Portugal","Qatar","Royaume-Uni","Russie","Sénégal","Suisse","Tunisie","Turquie","Viêt Nam"];
+const TVA = 0.20;
+const ETUDE = { nom: "FIDAL Notaires", l1: "3 place de la Madeleine", l2: "75008 Paris", crpcen: "CRPCEN 75007" };
+
+const $ = id => document.getElementById(id);
+const eur = n => (Math.round(n * 100) / 100).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).replace(/[\u202F\u00A0]/g, " ") + " €";
+const num = v => { const n = parseFloat(String(v).replace(",", ".")); return isFinite(n) && n > 0 ? n : 0; };
+const nomFichier = s => (s || "").replace(/[\\/:*?"<>|]+/g, "-").trim();
+
+$("pays-liste").innerHTML = PAYS.map(p => '<option value="' + p + '">').join("");
+$("natures").innerHTML = NATURES.map(p => '<option value="' + p.replace(/"/g, "&quot;") + '">').join("");
+(function refDefaut(){ const d = new Date(), z = n => String(n).padStart(2, "0");
+  $("ref").value = "LEG-" + d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "-" + z(d.getHours()) + z(d.getMinutes()); })();
+
+/* ---------- lignes de documents ---------- */
+function ajouterLigne(nature = "", ex = 1){
+  const l = document.createElement("div"); l.className = "doc";
+  l.innerHTML = '<input type="text" class="d-nat" list="natures" placeholder="Acte de naissance" autocomplete="off" aria-label="Nature du document">'
+    + '<input type="number" class="d-ex" min="1" step="1" inputmode="numeric" aria-label="Nombre d\'exemplaires">'
+    + '<input type="number" class="d-pu" min="0" step="0.01" inputmode="decimal" placeholder="0,00" aria-label="Prix unitaire hors taxes">'
+    + '<button type="button" class="sup" title="Retirer cette ligne" aria-label="Retirer cette ligne">×</button>';
+  l.querySelector(".d-nat").value = nature; l.querySelector(".d-ex").value = ex;
+  l.querySelector(".d-nat").addEventListener("change", () => {
+    const pu = BAREME[l.querySelector(".d-nat").value.trim()];
+    if(pu != null && !l.querySelector(".d-pu").dataset.touche) l.querySelector(".d-pu").value = pu;
+    rendre();
+  });
+  l.querySelector(".d-pu").addEventListener("input", e => { e.target.dataset.touche = "1"; });
+  l.querySelector(".sup").addEventListener("click", () => { l.remove(); if(!document.querySelector(".doc")) ajouterLigne(); rendre(); });
+  l.querySelectorAll("input").forEach(i => i.addEventListener("input", rendre));
+  $("docs").appendChild(l);
+}
+$("ajout").addEventListener("click", () => { ajouterLigne(); rendre(); });
+
+function lignes(){
+  return [...document.querySelectorAll(".doc")].map(l => {
+    const nature = l.querySelector(".d-nat").value.trim();
+    const ex = Math.max(1, Math.round(num(l.querySelector(".d-ex").value)) || 1);
+    const pu = num(l.querySelector(".d-pu").value);
+    return { nature, ex, pu, total: ex * pu };
+  }).filter(x => x.nature);
+}
+function etat(){
+  const L = lignes();
+  const ht = L.reduce((s, x) => s + x.total, 0), tva = ht * TVA, deb = num($("debours").value);
+  const civ = $("civ").value, nom = $("nom").value.trim(), prenom = $("prenom").value.trim();
+  const client = civ ? (civ + " " + (prenom ? prenom + " " : "") + nom.toUpperCase()).trim() : nom;
+  const form = $("formalite");
+  return { L, ht, tva, deb, ttc: ht + tva + deb, client, civ, nom, adresse: $("adresse").value.trim(), email: $("email").value.trim(), tel: $("tel").value.trim(),
+    pays: $("pays").value.trim(), formalite: form.value, formaliteLib: form.value ? form.options[form.selectedIndex].text : "", delai: $("delai").value, ref: $("ref").value.trim() };
+}
+function dateLongue(v){ if(!v) return ""; const [a, m, j] = v.split("-").map(Number); return new Date(a, m - 1, j).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }); }
+
+function rendre(){
+  const e = etat();
+  $("t-ht").textContent = eur(e.ht); $("t-tva").textContent = eur(e.tva); $("t-deb").textContent = eur(e.deb); $("t-ttc").textContent = eur(e.ttc);
+  const manque = [];
+  if(!e.nom) manque.push("le nom du client");
+  if(!e.pays) manque.push("le pays de destination");
+  if(!e.L.length) manque.push("au moins un document");
+  const sansPrix = e.L.filter(x => !x.pu).length;
+  $("recap").innerHTML = manque.length ? '<span class="warn">Manque ' + manque.join(", ") + ".</span>"
+    : (sansPrix ? '<span class="warn">' + sansPrix + " ligne" + (sansPrix > 1 ? "s" : "") + " sans prix : la note portera 0,00 € pour " + (sansPrix > 1 ? "ces lignes" : "cette ligne") + ".</span>" : "Note prête.");
+  $("email").classList.toggle("ko", !!e.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email));
+  $("partager").disabled = $("telecharger").disabled = !!manque.length;
+  $("mail").href = "mailto:" + e.email + "?subject=" + encodeURIComponent(objetMail(e)) + "&body=" + encodeURIComponent(corpsMail(e));
+}
+function objetMail(e){ return "Note d'honoraires " + (e.ref || "") + " – légalisation de documents"; }
+function corpsMail(e){
+  const civ = e.civ ? e.civ : "Madame, Monsieur";
+  const plur = e.L.length > 1 || (e.L[0] && e.L[0].ex > 1);
+  const leur = plur ? "leur" : "sa";
+  const but = e.formalite === "apostille" ? leur + " apostille" : e.formalite === "aucune" ? leur + " utilisation à l'étranger" : leur + " légalisation";
+  return civ + ",\n\nVous trouverez ci-joint la note d'honoraires relative à la certification "
+    + (plur ? "de vos documents" : "de votre document") + " en vue de " + but
+    + (e.pays ? " (destination : " + e.pays + ")" : "") + ".\n\nNotre étude se charge de l'ensemble des démarches"
+    + (e.delai ? " et fera le nécessaire pour vous " + (plur ? "les" : "le") + " remettre au plus tard le " + dateLongue(e.delai) : "") + ".\n\n"
+    + "Nous restons à votre disposition.\n\nBien cordialement,\nFIDAL Notaires";
+}
+
+/* ---------- note d'honoraires en PDF ---------- */
+async function polices(doc){
+  const { StandardFonts } = PDFLib;
+  // Charte : Segoe UI sur les documents. Utilisée si les fichiers sont dans le dépôt, sinon Helvetica.
+  try{
+    if(typeof fontkit === "undefined") throw 0;
+    const [r, b] = await Promise.all(["./segoeui.ttf", "./segoeuib.ttf"].map(u => fetch(u).then(x => { if(!x.ok) throw 0; return x.arrayBuffer(); })));
+    doc.registerFontkit(fontkit);
+    return { r: await doc.embedFont(r, { subset: true }), b: await doc.embedFont(b, { subset: true }), segoe: true };
+  }catch(e){
+    return { r: await doc.embedFont(StandardFonts.Helvetica), b: await doc.embedFont(StandardFonts.HelveticaBold), segoe: false };
+  }
+}
+async function fabriquerNote(e){
+  const { PDFDocument, rgb } = PDFLib;
+  const doc = await PDFDocument.create();
+  doc.setTitle("Note d'honoraires " + e.ref); doc.setAuthor(ETUDE.nom);
+  const F = await polices(doc);
+  const nuit = rgb(15/255, 34/255, 56/255), canard = rgb(51/255, 131/255, 139/255), gris = rgb(0.35, 0.37, 0.42), filet = rgb(0.85, 0.85, 0.82);
+  const page = doc.addPage([595.28, 841.89]);
+  const W = 595.28, M = 56;
+  const ecrire = (t, x, y, o = {}) => page.drawText(String(t), { x, y, size: o.s || 10, font: o.b ? F.b : F.r, color: o.c || nuit });
+  const droite = (t, xd, y, o = {}) => ecrire(t, xd - (o.b ? F.b : F.r).widthOfTextAtSize(String(t), o.s || 10), y, o);
+  const couper = (t, larg, s = 10, f = F.r) => { const mots = String(t).split(/\s+/); const out = []; let l = "";
+    for(const m of mots){ const essai = l ? l + " " + m : m; if(f.widthOfTextAtSize(essai, s) > larg && l){ out.push(l); l = m; } else l = essai; } if(l) out.push(l); return out; };
+
+  // bandeau
+  page.drawRectangle({ x: 0, y: 841.89 - 6, width: W, height: 6, color: canard });
+  ecrire(ETUDE.nom, M, 780, { s: 16, b: true });
+  ecrire(ETUDE.l1, M, 762, { c: gris }); ecrire(ETUDE.l2, M, 749, { c: gris }); ecrire(ETUDE.crpcen, M, 736, { c: gris });
+  droite("Note d'honoraires", W - M, 780, { s: 16, b: true });
+  droite("N° " + e.ref, W - M, 762, { c: gris });
+  droite("Paris, le " + new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }), W - M, 749, { c: gris });
+
+  // destinataire
+  let y = 690;
+  ecrire(e.client, 330, y, { b: true }); y -= 14;
+  couper(e.adresse, W - M - 330).forEach(l => { ecrire(l, 330, y); y -= 14; });
+  if(e.email){ ecrire(e.email, 330, y, { c: gris }); y -= 14; }
+
+  // objet
+  y = Math.min(y, 640) - 18;
+  ecrire("Objet", M, y, { b: true, c: canard });
+  const objet = "Certification de " + (e.L.length > 1 ? "documents" : "document") + " destiné" + (e.L.length > 1 ? "s" : "") + " à l'étranger"
+    + (e.pays ? " — pays de destination : " + e.pays : "") + (e.formaliteLib && e.formalite ? " — formalité : " + e.formaliteLib.toLowerCase() : " — formalité déterminée par l'étude");
+  couper(objet, W - 2 * M - 60).forEach((l, i) => { ecrire(l, M + 60, y - i * 14); }); y -= 14 * couper(objet, W - 2 * M - 60).length;
+  if(e.delai){ ecrire("Délai", M, y - 4, { b: true, c: canard }); ecrire("Remise souhaitée au plus tard le " + dateLongue(e.delai), M + 60, y - 4); y -= 18; }
+
+  // tableau
+  y -= 22;
+  const cEx = 310, cPu = 405, cTot = W - M;
+  page.drawRectangle({ x: M, y: y - 6, width: W - 2 * M, height: 22, color: nuit });
+  ecrire("Nature du document", M + 8, y, { b: true, c: rgb(1, 1, 1) });
+  droite("Exemplaires", cEx + 30, y, { b: true, c: rgb(1, 1, 1) });
+  droite("Prix unitaire HT", cPu + 40, y, { b: true, c: rgb(1, 1, 1) });
+  droite("Total HT", cTot - 8, y, { b: true, c: rgb(1, 1, 1) });
+  y -= 24;
+  for(const x of e.L){
+    const ls = couper(x.nature, cEx - M - 80);
+    ls.forEach((l, i) => ecrire(l, M + 8, y - i * 13));
+    droite(String(x.ex), cEx + 30, y); droite(eur(x.pu), cPu + 40, y); droite(eur(x.total), cTot - 8, y);
+    y -= 13 * ls.length + 6;
+    page.drawLine({ start: { x: M, y: y + 2 }, end: { x: W - M, y: y + 2 }, thickness: 0.6, color: filet });
+    y -= 10;
+  }
+
+  // totaux
+  y -= 6;
+  const tot = (lib, v, gras) => { ecrire(lib, 330, y, { b: gras }); droite(eur(v), cTot - 8, y, { b: gras }); y -= 16; };
+  tot("Honoraires hors taxes", e.ht); tot("TVA 20 %", e.tva);
+  if(e.deb) tot("Débours (non soumis à TVA)", e.deb);
+  page.drawLine({ start: { x: 330, y: y + 10 }, end: { x: W - M, y: y + 10 }, thickness: 0.8, color: nuit });
+  y -= 2; tot("Total à régler", e.ttc, true);
+
+  // mentions
+  y -= 20;
+  const mentions = ["L'étude se charge de l'ensemble du circuit : certification des documents puis formalité requise par le pays de destination.",
+    "Règlement à réception de la présente note."];
+  mentions.forEach(m => { couper(m, W - 2 * M, 9).forEach(l => { ecrire(l, M, y, { s: 9, c: gris }); y -= 12; }); y -= 2; });
+
+  // pied
+  page.drawLine({ start: { x: M, y: 60 }, end: { x: W - M, y: 60 }, thickness: 0.6, color: filet });
+  ecrire(ETUDE.nom + " — " + ETUDE.l1 + ", " + ETUDE.l2 + " — " + ETUDE.crpcen, M, 46, { s: 8, c: gris });
+  return { octets: await doc.save(), segoe: F.segoe };
+}
+async function fichierNote(){
+  const e = etat(); const r = await fabriquerNote(e);
+  const nom = "Note d'honoraires " + nomFichier(e.ref) + " - " + nomFichier(e.client || "client") + ".pdf";
+  return { e, f: new File([r.octets], nom, { type: "application/pdf" }), segoe: r.segoe };
+}
+
+$("partager").addEventListener("click", async () => {
+  const { e, f } = await fichierNote();
+  if(!navigator.share || (navigator.canShare && !navigator.canShare({ files: [f] }))){
+    $("status").textContent = "Cet appareil ne sait pas joindre la note par le menu de partage : téléchargez-la, puis ouvrez le mail sans pièce et joignez-la."; return;
+  }
+  try{ await navigator.share({ files: [f], title: objetMail(e), text: corpsMail(e) }); $("status").textContent = "Note transmise au menu de partage : choisissez votre messagerie et vérifiez le destinataire."; }
+  catch(err){ $("status").textContent = err.name === "AbortError" ? "Envoi annulé." : "L'appareil a refusé le partage : téléchargez la note et ouvrez le mail sans pièce."; }
+});
+$("telecharger").addEventListener("click", async () => {
+  const { f, segoe } = await fichierNote();
+  const a = document.createElement("a"); a.href = URL.createObjectURL(f); a.download = f.name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  $("status").textContent = "Note téléchargée." + (segoe ? "" : " (Police de secours : Segoe UI non trouvée dans le dépôt.)");
+});
+
+["civ", "nom", "prenom", "adresse", "email", "tel", "pays", "formalite", "delai", "ref", "debours"].forEach(id => $(id).addEventListener("input", rendre));
+$("formalite").addEventListener("change", rendre); $("civ").addEventListener("change", rendre);
+if(typeof PDFLib === "undefined") $("status").innerHTML = '<span class="warn">Bibliothèque PDF non chargée : vérifiez la connexion puis rechargez la page.</span>';
+ajouterLigne();
+rendre();
+</script>
+</body>
+</html>
