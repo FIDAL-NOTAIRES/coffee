@@ -291,19 +291,14 @@ function rendre(){
 }
 function objetMail(e){ return "Note d'honoraires " + (e.ref || "") + " – légalisation de documents"; }
 function corpsMail(e){
-  const civ = e.civ ? e.civ : "Madame, Monsieur";
+  // Texte arrêté par JFD le 18/10/2026.
+  const appel = e.civ === "Madame" ? "Chère Madame," : e.civ === "Monsieur" ? "Cher Monsieur," : "Madame, Monsieur,";
   const plur = e.L.length > 1 || (e.L[0] && e.L[0].ex > 1);
-  const leur = plur ? "leur" : "sa";
-  const fs = [...new Set(e.L.map(x => x.formalite).filter(Boolean))];
-  const but = fs.length === 1 && fs[0] === "apostille" ? leur + " apostille"
-    : fs.length === 1 && fs[0] === "legalisation" ? leur + " légalisation"
-    : fs.length === 1 && fs[0] === "aucune" ? leur + " utilisation à l'étranger"
-    : fs.length > 1 ? leur + " apostille ou " + leur + " légalisation selon les documents" : leur + " légalisation ou " + leur + " apostille";
-  return civ + ",\n\nVous trouverez ci-joint la note d'honoraires relative à la certification "
-    + (plur ? "de vos documents" : "de votre document") + " en vue de " + but
-    + (e.pays ? " (destination : " + e.pays + ")" : "") + ".\n\nNotre étude se charge de l'ensemble des démarches"
-    + (e.delai ? " et fera le nécessaire pour vous " + (plur ? "les" : "le") + " remettre au plus tard le " + dateLongue(e.delai) : "") + ".\n\n"
-    + "Nous restons à votre disposition.\n\nBien cordialement,\nFIDAL Notaires";
+  return appel + "\n\nVous trouverez ci-joint notre proposition d'honoraires relative à la certification "
+    + (plur ? "de vos documents" : "de votre document") + " en vue de " + (plur ? "leur" : "sa") + " légalisation"
+    + (e.pays ? " (pays de destination : " + e.pays + ")" : "") + ".\n\n"
+    + "Notre étude se chargera de l'ensemble des diligences nécessaires à " + (plur ? "leur" : "sa") + " transmission à vos interlocuteurs à l'étranger.\n\n"
+    + "Vous souhaitant bonne réception des présentes, je vous souhaite une bonne journée.\n\nFIDAL Notaires";
 }
 
 /* ---------- note d'honoraires en PDF ---------- */
